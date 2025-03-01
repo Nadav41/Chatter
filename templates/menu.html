@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Action</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e3f2fd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .menu-box {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between buttons */
+            width: 300px; /* Wider box */
+            min-height: 200px; /* Increased height */
+
+            position: absolute;
+            top: 30mm;
+        }
+
+        .button {
+            background-color: #1e88e5;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            align-items: center;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 80%;
+            display: block;
+            margin-left: auto;  /* Center horizontally */
+            margin-right: auto;
+        }
+
+        .button:hover {
+            background-color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-box">
+        <h2>Select an Action</h2>
+        <a href="/summarize" class="button">Summarize Chat</a>
+        <a href="/argument" class="button">Settle an Argument</a>
+        <a href="/week_count" class="button">Message Count Per Week</a>
+    </div>
+</body>
+</html>

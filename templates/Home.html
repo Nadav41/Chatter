@@ -20,33 +20,66 @@
         /* Card Container */
         .container {
             background: white;
-            padding: 30px;
+            padding: 22px;
             border-radius: 12px;
+            margin-top: 2px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
             max-width: 400px;
             width: 100%;
             text-align: center;
-            position: relative;
-            top: -10mm; /* Moves container 1 cm upwards */
+
+            position: absolute;
+            top: 35mm;
+        }
+        /* Warning Message (Initially Hidden) */
+        .upload-warning {
+            font-size: 14px;
+            color: #d32f2f; /* Dark Red */
+            background: #ffebee; /* Light Red */
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+            display: none; /* Initially Hidden */
+        }
+        .container h2 {
+            margin-top: 2px;
+            }
+        .container h3 {
+            margin-top: 2px;
+            }
+
+        h1.title {
+            color: #218a57; /* WhatsApp Green */
+            font-size: 35px;
+            font-weight: bold;
+            text-align: center;
+
+            position: absolute;
+            top: 10mm;
         }
 
-        /* Title Styling */
-        h1 {
-            color: #1565c0; /* Medium Blue */
-            font-size: 28px;
-            margin-bottom: 15px;
+        h3.menu {
+            padding: 0px;
+
         }
 
-        h2 {
-            color: #333;
-            font-size: 20px;
-            margin-bottom: 20px;
+        /* Upload Box */
+        .upload-box {
+            background: #bbdefb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
         }
 
         /* Button Styling */
         .button {
             display: inline-block;
-            background-color: #1e88e5; /* Vibrant Blue */
+            background-color: #1e88e5;
             color: white;
             text-decoration: none;
             padding: 12px 18px;
@@ -57,44 +90,32 @@
             cursor: pointer;
             transition: 0.3s;
             margin-top: 10px;
+            width: 100%; /* Make buttons full width */
         }
 
         .button:hover {
-            background-color: #1565c0; /* Darker Blue */
+            background-color: #1565c0;
         }
 
-        /* File Upload Styling */
-        .upload-box {
-            background: #bbdefb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        input[type="file"] {
-            margin: 10px 0;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>WELCOME!</h1>
-        <h2>Please press a button:</h2>
+    <h1 class="title">Chatter - Know your chat!</h1>
 
-        <form action="/week_count" method="get">
-            <button class="button" type="submit">Weekly Message Count</button>
-        </form>
+    <div class="container">
+        <h2>WELCOME!</h2>
+        <h3>Please press a button:</h3>
 
         <!-- ZIP File Upload Section -->
         <div class="upload-box">
             <h3>Upload a ZIP File</h3>
             <form method="POST" action="/" enctype="multipart/form-data">
-                <input type="file" name="zip_file" required>
+                <input type="file" id="zipInput" name="zip_file" required>
                 <br>
                 <button class="button" type="submit">Upload ZIP</button>
             </form>
         </div>
     </div>
+
 </body>
 </html>

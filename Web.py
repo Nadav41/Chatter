@@ -4,13 +4,13 @@ import os
 
 app = Flask(__name__)
 
-
+text_processor = None
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-text_processor = interface('')
-
 @app.route("/", methods=["GET", "POST"])
 def home():
+    global text_processor
+
     if request.method == "POST":
         if "zip_file" in request.files:
             file = request.files["zip_file"]
@@ -18,15 +18,13 @@ def home():
                 zip_path = os.path.join(UPLOAD_FOLDER, file.filename)
                 file.save(zip_path)
 
-                # Process the ZIP file using textdf class
                 text_processor = interface(zip_path)
-                extracted_files = text_processor.df.extract_zip(zip_path)
-
-                return f"Extracted Files: {extracted_files}"
+                return render_template('menu.html')
             else:
-                return "Please upload a valid ZIP file."
+                return render_template('error.html', message="Please upload a valid ZIP file.")
 
     return render_template("Home.html")
+
 
 # @app.route('/sum')
 # def sum():
@@ -34,6 +32,9 @@ def home():
 
 @app.route("/week_count")
 def week_count():
+    if text_processor is None:
+        return "No ZIP file has been uploaded yet!"
+
     result = text_processor.df.count_by_week().split("\n")  # Convert text into a list
     return render_template("message count.html", result=result)
 
