@@ -1,15 +1,16 @@
-from TextToDF import TextDF
+from TextToDFWeb import TextDF
 from datetime import datetime
 from Exceptions import DateError
-from API import *
+from API import Comunnicate
 now = datetime.now()
 print(now)
 
 
 class interface:
     def __init__(self,path,enc = False):
-        self.df = TextDF(path,enc)
-        self.__is_enc = enc
+        if path != '':
+            self.df = TextDF(path,enc)
+            self.__is_enc = enc
 
     def menu(self):
         while True:
@@ -18,7 +19,7 @@ class interface:
             choice = input()
 
             if choice == '1':
-                self.sum_chat()
+                self.sum_chat('1')
 
 
             if choice == '2':
@@ -43,24 +44,20 @@ class interface:
             if choice == '3':
                 self.df.count_by_week()
 
-    def sum_chat(self):
+    def sum_chat(self, lang):
         chat = self.get_df()
-        lang = input('\nChoose a language: 1. English. 2. Hebrew.\n')
-        while True:
-            if lang != '1' and lang != '2':
-                continue
-            elif lang == '1':
-                print('\nAI response:\n')
-                answer = self.df.dec_message(Comunnicate(
-                    prompt=f"Summarize the following chat factually in **no more than 3 sentences**. Do not ask questions. Be concise. Do not add opinions, explanations, or unnecessary details. Chat: {chat}",
-                    temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
-            else:
-                print('\nAI response:\n')
-                answer = self.df.dec_message(Comunnicate(
-                    prompt=f"תענה בעברית בלבד וסכם את השיחה הבאה באופן עובדתי. אל תשאל שאלות. כלול את שמות כל המשתתפים. אל תוסיף דעות, הסברים או עצות. שיחה: {chat}",
-                    temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
-            print(answer)
-            break
+        if lang == '1':
+            print('\nAI response:\n')
+            answer = self.df.dec_message(Comunnicate(
+                prompt=f"Summarize the following chat factually in **no more than 3 sentences**. Do not ask questions. Be concise. Do not add opinions, explanations, or unnecessary details. Chat: {chat}",
+                temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
+        else:
+            print('\nAI response:\n')
+            answer = self.df.dec_message(Comunnicate(
+                prompt=f"תענה בעברית בלבד וסכם את השיחה הבאה באופן עובדתי. אל תשאל שאלות. כלול את שמות כל המשתתפים. אל תוסיף דעות, הסברים או עצות. שיחה: {chat}",
+                temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
+        return answer
+
     def get_df(self):
         while True:
             try:
@@ -141,14 +138,14 @@ class interface:
             raise ValueError("Invalid time! Please enter a valid time in HH MM format.\n")
 
 # inter = interface('/Users/nadav/Downloads/_chat 4 copy.txt', False)
-j = 0
-print('------------------------------------------------------------------------------------')
+# j = 0
+# print('------------------------------------------------------------------------------------')
 # for i in inter.df.start_from(0, 2, 23,2,2025)['Txt']:
 #     j+=1
 #     print(i)
 # print(str(j))
-inter = interface('/Users/nadav/Downloads/_chat 15.txt', True)
+# inter = interface('/Users/nadav/Downloads/_chat 15.txt', True)
 # print()
 # inter.df.count_by_week()
-inter.sum_chat()
+# inter.sum_chat()
 # print(inter.enter_date_time())

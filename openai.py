@@ -17,7 +17,6 @@ message = client.beta.threads.messages.create(
     role="user",
     content="I need to solve the equation `3x + 11 = 14`. Can you help me?",
 )
-
 run = client.beta.threads.runs.create_and_poll(
     thread_id=thread.id,
     assistant_id=assistant.id,

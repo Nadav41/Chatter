@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e3f2fd; /* Light Blue */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Card Container */
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            top: -10mm; /* Moves container 1 cm upwards */
+        }
+
+        /* Title Styling */
+        h1 {
+            color: #1565c0; /* Medium Blue */
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Button Styling */
+        .button {
+            display: inline-block;
+            background-color: #1e88e5; /* Vibrant Blue */
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background-color: #1565c0; /* Darker Blue */
+        }
+
+        /* File Upload Styling */
+        .upload-box {
+            background: #bbdefb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WELCOME!</h1>
+        <h2>Please press a button:</h2>
+
+        <form action="/week_count" method="get">
+            <button class="button" type="submit">Weekly Message Count</button>
+        </form>
+
+        <!-- ZIP File Upload Section -->
+        <div class="upload-box">
+            <h3>Upload a ZIP File</h3>
+            <form method="POST" action="/" enctype="multipart/form-data">
+                <input type="file" name="zip_file" required>
+                <br>
+                <button class="button" type="submit">Upload ZIP</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

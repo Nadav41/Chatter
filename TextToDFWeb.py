@@ -2,7 +2,8 @@ import pandas as pd
 import re
 from Exceptions import DateError
 from datetime import datetime, timedelta
-
+import os
+import zipfile
 
 def split_whatsapp_chat(chat_text):
     chat_text = chat_text.replace("\u200E", "").replace("\u200F", "").replace('\n','.')
@@ -15,17 +16,31 @@ def split_whatsapp_chat(chat_text):
     return [msg.strip() for msg in messages if msg.strip()]
 
 class TextDF:
-    def __init__(self,path ,enc = False):
-        self.__txt = self.prepare_text(path)
+    def __init__(self, path, enc=False):
+        self.extracted_folder = "extracted_files"
+        txt_path = self.extract_zip(path)[0]
+        self.__txt = self.prepare_text(txt_path)
         data = {'Author': [] ,'Txt' :[],'Day' : [], 'Month' : [], 'Year' : [], 'Hour' : [], 'Minutes' : []}
         self.df = pd.DataFrame(data)
         self.__names = {}
-        self.make_text(path, enc)
+        self.make_text(txt_path, enc)
         if enc:
             self.enc_Txt()
 
+    def extract_zip(self,zip_path):
+        """Extracts the ZIP file and returns the extracted file path(s)."""
+        if not zipfile.is_zipfile(zip_path):
+            raise ValueError("Provided file is not a valid ZIP file.")
 
+        # Create a folder to store extracted files
+        os.makedirs(self.extracted_folder, exist_ok=True)
 
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(self.extracted_folder)
+
+        # Get the extracted file paths
+        extracted_files = [os.path.join(self.extracted_folder, f) for f in os.listdir(self.extracted_folder)]
+        return extracted_files
 
     def open_txt(self,path):
         with open(path, "r", encoding="utf-8") as file:
@@ -109,19 +124,19 @@ class TextDF:
             current_week_count = 0
 
         # Print current week info using the period's start and end dates
-
-        print( f"This week ({current_week_period.start_time.strftime('%d/%m/%Y')} - {current_week_period.end_time.strftime('%d/%m/%Y')}): {current_week_count} messages")
+        res_str = ''
+        res_str +=f"This week ({current_week_period.start_time.strftime('%d/%m/%Y')} - {current_week_period.end_time.strftime('%d/%m/%Y')}): {current_week_count} messages\n"
 
         # Sort the weeks by message count in descending order and take the top 5 weeks
         top_weeks = weekly_counts.sort_values(by="Message_Count", ascending=False).head(5).reset_index(drop=True)
 
-        print("Top 5 weeks:")
+        res_str += "Top 5 weeks:\n"
         for idx, row in top_weeks.iterrows():
             start_str = row["Week_Start"].strftime("%d/%m/%Y")
             end_str = row["Week_End"].strftime("%d/%m/%Y")
-            print(f"{idx + 1}: {start_str} - {end_str}: {row['Message_Count']} messages")
+            res_str += f"{idx + 1}: {start_str} - {end_str}: {row['Message_Count']} messages\n"
 
-        return weekly_counts, top_weeks
+        return res_str
 
     def enc_Txt(self):
         self.df['Txt'] = self.df['Txt'].apply(lambda message: self.enc_message(message))
