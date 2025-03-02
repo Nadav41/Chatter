@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>  <!-- Dynamic Title -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e3f2fd;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: left; /* Text is left-aligned */
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 40mm;
+        }
+        h1 {
+            font-size: 35px;
+            color: #1565c0; /* Medium Blue */
+            text-align: center;
+            position: absolute;
+            top: 20mm;
+        }
+        .content {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center; /* Centers the button */
+            margin-top: 20px;
+        }
+        .back-button {
+            padding: 10px 15px;
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>{{ page_title }}</h1>  <!-- Dynamic Title -->
+
+    <div class="container">
+        <p class="content">
+            {{ page_content }}  <!-- Dynamic Content -->
+        </p>
+        <div class="button-container">
+            <button class="back-button" onclick="history.back()">← Back</button>  <!-- Centered Back Button -->
+        </div>
+    </div>
+
+</body>
+</html>

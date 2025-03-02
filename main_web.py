@@ -58,6 +58,20 @@ class interface:
                 temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
         return answer
 
+    def arg_chat(self, lang):
+        chat = self.get_df()
+        if lang == '1':
+            print('\nAI response:\n')
+            answer = self.df.dec_message(Comunnicate(
+                prompt=f"Analyze the following conversation factually and determine who is correct based on the statements given. Provide only the name of the correct person and a two-sentences short explanation. Do not add opinions. Chat: {chat}",
+                temperature=0.3, max_tokens=200, content='You are a smart summarize expert'))
+        else:
+            print('\nAI response:\n')
+            answer = self.df.dec_message(Comunnicate(
+                prompt=f"תנתח את השיחה הבאה באופן עובדתי ותקבע מי צודק בהתבסס על הטענות שנאמרו. ציין רק את שם האדם הצודק ותן הסבר במשפט אחד בלבד. אל תוסיף דעות. שיחה: {chat}",
+                temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
+        return answer
+
     def get_df(self):
         while True:
             try:

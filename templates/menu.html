@@ -52,14 +52,28 @@
         .button:hover {
             background-color: #1565c0;
         }
+        .back-button {
+            background-color: #0f6fc4; /* Darker Blue */
+            position: relative;
+            top: -10mm;
+            width: 110px;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            background-color: #05569d;
+        }
     </style>
 </head>
 <body>
     <div class="menu-box">
         <h2>Select an Action</h2>
-        <a href="/summarize" class="button">Summarize Chat</a>
-        <a href="/argument" class="button">Settle an Argument</a>
+        <a href="/sum_eng" class="button">Summarize Chat</a>
+        <a href="/arg_eng" class="button">Settle an Argument</a>
         <a href="/week_count" class="button">Message Count Per Week</a>
+
     </div>
+    <button class="button back-button" onclick="history.back()">Back</button>
+
 </body>
 </html>

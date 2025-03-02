@@ -19,16 +19,34 @@ def home():
                 file.save(zip_path)
 
                 text_processor = interface(zip_path)
-                return render_template('menu.html')
+                return redirect(url_for("menu"))
             else:
                 return render_template('error.html', message="Please upload a valid ZIP file.")
-
     return render_template("Home.html")
 
+@app.route('/menu')
+def menu():
+    global sum_res, arg_res
+    sum_res,arg_res = None, None
+    return render_template('menu.html')
 
-# @app.route('/sum')
-# def sum():
-#     return inter.sum_chat(lang= '1')
+@app.route('/sum_eng')
+def sum():
+    global sum_res
+    if text_processor is None:
+        return render_template('error.html', message="No ZIP file was uploaded.")
+    if sum_res is None:
+        sum_res = text_processor.sum_chat(lang='1')
+    return render_template('text_template.html', page_title = 'AI Summary of Chat', page_content = sum_res)
+
+@app.route('/arg_eng')
+def arg():
+    global arg_res
+    if text_processor is None:
+        return render_template('error.html', message="No ZIP file was uploaded.")
+    if arg_res is None:
+        arg_res = text_processor.arg_chat(lang='1')
+    return render_template('text_template.html', page_title = 'Who is Right?', page_content = arg_res)
 
 @app.route("/week_count")
 def week_count():
