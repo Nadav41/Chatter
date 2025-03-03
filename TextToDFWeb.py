@@ -23,14 +23,17 @@ def split_whatsapp_chat(chat_text):
     return [msg.strip() for msg in messages if msg.strip()]
 
 class TextDF:
-    def __init__(self, path, enc=False):
+    def __init__(self, path = None, enc=False, ready_str = None):
         self.extracted_folder = "extracted_files"
-        txt_path = self.extract_zip(path)[0]
-        self.__txt = self.prepare_text(txt_path)
+        if path is not None:
+            txt_path = self.extract_zip(path)[0]
+        self.__txt = ready_str.replace('\n','.')
+        if ready_str is None:
+            self.__txt = self.prepare_text(txt_path)
         data = {'Author': [] ,'Txt' :[],'Day' : [], 'Month' : [], 'Year' : [], 'Hour' : [], 'Minutes' : []}
         self.df = pd.DataFrame(data)
         self.__names = {}
-        self.make_text(txt_path, enc)
+        self.make_text(ready_str, enc)
         if enc:
             self.enc_Txt()
 
@@ -67,7 +70,21 @@ class TextDF:
         reg_list = re.findall(r'\[\d{2}/\d{2}/\d{4},\s\d{2}:\d{2}:\d{2}\]', self.__txt)
         return reg_list
 
-    def make_text(self,path,flag = False):
+    def make_text(self,ready_str,flag = False):
+        for i in split_whatsapp_chat(ready_str):
+            time = i[:22]
+            time = self.split_time(time)
+            i = i[22:]
+            # print(i)
+            start = i.index(':')
+            message = i[start + 2:]
+            author = i[:start]
+            self.df.loc[len(self.df)] = self.enc(author, message, flag) + time
+        self.df[["Year", "Month", "Day", "Hour", "Minutes"]] = self.df[["Year", "Month", "Day", "Hour", "Minutes"]].astype(int)
+        # Convert dataframe timestamps to datetime objects
+        self.df["Datetime"] = self.df.apply(lambda row: datetime(row["Year"], row["Month"], row["Day"], row["Hour"], row["Minutes"]), axis=1)
+
+    def make_text1(self,path,flag = False):
         for i in split_whatsapp_chat(self.open_txt(path)):
             time = i[:22]
             time = self.split_time(time)

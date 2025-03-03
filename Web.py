@@ -1,10 +1,11 @@
 import datetime
 from Exceptions import DateError
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, redirect, url_for, session, jsonify
 from main_web import interface
 from dateutil import parser
 import os
 import uuid
+
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Required for sessions
@@ -30,28 +31,35 @@ def detect_language(text):
 
     return "rtl" if hebrew_count > english_count else "ltr"
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    user_id = get_user_id()
-    if request.method == "POST":
-        if "zip_file" in request.files:
-            file = request.files["zip_file"]
-            if file.filename.endswith(".zip"):
-                zip_path = os.path.join(UPLOAD_FOLDER, file.filename)
-                file.save(zip_path)
-                # Create a new entry for this user containing their text_processor and related data.
-                user_data[user_id] = {
-                    "text_processor": interface(zip_path),
-                    "sum_res": None,
-                    "arg_res": None,
-                    "start_date": None,
-                    "end_date": None
-                }
-                return redirect(url_for("menu"))
-            else:
-                return render_template('error.html', message="Please upload a valid ZIP file.")
-    return render_template("Home.html")
 
+@app.route("/", methods=["GET"])
+def home():
+    # דף הבית: מציג את הקובץ "zip extract.html" עם אפשרות העלאת קובץ ZIP.
+    return render_template("zip extract.html")
+
+
+@app.route("/process_text", methods=["POST"])
+def process_text():
+    """
+    ראוט שמקבל את המחרוזת שהופקה מהקובץ (באמצעות JSZip בצד הלקוח)
+    ויוצר ממנה את text_processor עבור המשתמש.
+    """
+    user_id = get_user_id()
+    data = request.json
+    extracted_text = data.get("text", "")
+    if not extracted_text:
+        return jsonify({"error": "No text received"}), 400
+
+    # ייצור מעבד הטקסט בעזרת הפונקציה interface, שמקבלת את המחרוזת
+    user_data[user_id] = {
+        "text_processor": interface(ready_str=extracted_text),
+        "sum_res": None,
+        "arg_res": None,
+        "start_date": None,
+        "end_date": None
+    }
+
+    return jsonify({"message": "Processor created", "text": extracted_text})
 
 @app.route('/menu')
 def menu():
@@ -133,6 +141,7 @@ def process_dates():
     user_data[user_id]["end_date"] = (end_dt.hour, end_dt.minute, end_dt.day, end_dt.month, end_dt.year)
 
     return redirect(url_for(next_action))
+
 
 
 if __name__ == '__main__':

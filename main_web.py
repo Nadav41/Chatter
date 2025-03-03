@@ -7,10 +7,10 @@ print(now)
 
 
 class interface:
-    def __init__(self,path,enc = False):
-        if path != '':
-            self.df = TextDF(path,enc)
-            self.__is_enc = enc
+    def __init__(self,ready_str,enc = False):
+
+        self.df = TextDF(ready_str = ready_str, enc = enc)
+        self.__is_enc = enc
 
     def menu(self):
         while True:
