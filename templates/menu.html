@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Action</title>
+    <title>Chatter- Menu</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #e3f2fd;
+            background-image: url('/static/Chatter background.jpg'); /* Replace with your image path */
+            background-size: cover; /* Cover the entire screen */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* No repeating */
+            background-attachment: fixed;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,7 +22,7 @@
         }
 
         .menu-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
             padding: 12px 18px;
             border-radius: 12px;
             box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
@@ -29,8 +33,46 @@
             min-height: 200px; /* Increased height */
 
             position: absolute;
-            top: 30mm;
-            transform: scale(1.18)
+            top: 30mm; /* Default position */
+            transform: translateY(20px); /* Start lower */
+            opacity: 0; /* Start hidden */
+
+            animation: fadeSlideUp 0.6s ease-out forwards; /* Apply animation */
+        }
+
+        .back-button {
+            background-color: #0f6fc4;
+            position: absolute;
+            top: 110mm;
+            max-width: 115px;
+            margin-top: 10px;
+            transform: scale(1.05);
+
+            opacity: 0; /* Start hidden */
+            animation: fadeIn 0.6s ease-out forwards; /* Fade in */
+        }
+
+
+        /* Animation Keyframes */
+        @keyframes fadeSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px); /* Start lower */
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0); /* Move to final position */
+            }
+        }
+
+        /* Button Animation: Fade In Only */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
         }
 
         .button {
@@ -52,14 +94,6 @@
 
         .button:hover {
             background-color: #1565c0;
-        }
-        .back-button {
-            background-color: #0f6fc4; /* Darker Blue */
-            position: absolute;
-            top: 110mm;
-            width: 115px;
-            margin-top: 10px;
-            transform: scale(1.05)
         }
 
         .back-button:hover {
