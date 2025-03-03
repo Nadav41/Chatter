@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Start & End Date</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e3f2fd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            top: -45mm;
+            transform: scale(1.05)
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .input-container {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .button {
+            background-color: #1e88e5;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .button:hover {
+            background-color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Select Start & End Date</h2>
+
+        <!-- ✅ Single Form (Fixed) -->
+        <form action="/process_dates" method="POST">
+
+            <!-- 🔥 Hidden field to pass next_action (sum_eng or arg_eng) -->
+            <input type="hidden" name="next_action" value="{{ next_action }}">
+
+            <!-- Start Date -->
+            <div class="input-container">
+                <label for="start_datetime">Start Date & Time:</label>
+                <input type="datetime-local" id="start_datetime" name="start_datetime" required>
+            </div>
+
+            <!-- End Date (Optional) -->
+            <div class="input-container">
+                <label for="end_datetime">End Date & Time (Optional):</label>
+                <input type="datetime-local" id="end_datetime" name="end_datetime">
+            </div>
+
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector("form").addEventListener("submit", function(event) {
+                var startDate = new Date(document.getElementById("start_datetime").value);
+                var endDateInput = document.getElementById("end_datetime").value;
+
+                if (endDateInput) { // Only check if End Date is filled
+                    var endDate = new Date(endDateInput);
+                    if (endDate < startDate) {
+                        alert("End date cannot be before start date!");
+                        event.preventDefault(); // Stop form submission
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -147,8 +147,8 @@ print('-------------------------------------------------------------------------
 #     j+=1
 #     print(i)
 # print(str(j))
-inter = interface('/Users/nadav/Downloads/_chat 15.txt', True)
+# inter = interface('/Users/nadav/Downloads/_chat 15.txt', True)
 # print()
 # inter.df.count_by_week()
-inter.sum_chat()
+# inter.sum_chat()
 # print(inter.enter_date_time())

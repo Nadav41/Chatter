@@ -5,6 +5,13 @@ from datetime import datetime, timedelta
 import os
 import zipfile
 
+def get_participants(df):
+    name_set = set()
+    if df.empty:
+        return ''
+    for name in df['Author']:
+        name_set.add(name)
+    return ', '.join(list(name_set))
 def split_whatsapp_chat(chat_text):
     chat_text = chat_text.replace("\u200E", "").replace("\u200F", "").replace('\n','.')
 
@@ -88,8 +95,8 @@ class TextDF:
         "Justice", "Rowe", "Winter", "Cam", "Haven", "Linden", "Ocean", "Sutton", "Ever", "Brighton",
         "Harlow", "Onyx", "Vale", "Salem", "Denim", "Indigo", "Lake", "Paris", "Ridley", "Storm",
         "West", "Lior", "Echo", "Sparrow", "Cypress", "Horizon", "Zephyr", "Zen", "Nova", "Briar"]
+        author = (' '.join(re.findall(r'(\S+)', author)))
         if flag:
-            author = (' '.join(re.findall(r'(\S+)', author)))
             if author not in self.__names:
                 self.__names[author] = self.__coded_names[len(self.__names)]
             return [self.__names[author], message]
@@ -141,9 +148,9 @@ class TextDF:
     def enc_Txt(self):
         self.df['Txt'] = self.df['Txt'].apply(lambda message: self.enc_message(message))
 
-    def start_from(self, hour, minutes, day, month, year):
+    def start_from(self, start_date):
         df = self.df.copy()  # Prevent modifying the original DataFrame
-        # Convert the input start time to datetime
+        hour, minutes, day, month, year = start_date
         start_time = datetime(year, month, day, hour, minutes)
 
         # Filter the DataFrame to include only messages after the given time
@@ -154,8 +161,8 @@ class TextDF:
 
         return df  # Return the filtered DataFrame
 
-    def end_at(self, hour, minutes, day, month, year,df):
-
+    def end_at(self,end_date, df):
+        hour, minutes, day, month, year = end_date
         end_time = datetime(year, month, day, hour, minutes)
 
 

@@ -1,4 +1,4 @@
-from TextToDFWeb import TextDF
+from TextToDFWeb import TextDF, get_participants
 from datetime import datetime
 from Exceptions import DateError
 from API import Comunnicate
@@ -36,7 +36,7 @@ class interface:
                     else:
                         print('\nAI response:\n')
                         answer = self.df.dec_message(Comunnicate(
-                            prompt = f"תנתח את השיחה הבאה באופן עובדתי ותקבע מי צודק בהתבסס על הטענות שנאמרו. ציין רק את שם האדם הצודק ותן הסבר במשפט אחד בלבד. אל תוסיף דעות. שיחה: {chat}",
+                            prompt = f"סכם את השיחה בעברית בלבד. שני משפטים בלבד – אין להוסיף יותר. השתמש בכל שמות המשתתפים. אין להוסיף דעות, הסברים או פרטים נוספים. שיחה: {chat}",
                             temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
                     print(answer)
                     break
@@ -44,50 +44,44 @@ class interface:
             if choice == '3':
                 self.df.count_by_week()
 
-    def sum_chat(self, lang):
-        chat = self.get_df()
-        if lang == '1':
-            print('\nAI response:\n')
-            answer = self.df.dec_message(Comunnicate(
-                prompt=f"Summarize the following chat factually in **no more than 3 sentences**. Do not ask questions. Be concise. Do not add opinions, explanations, or unnecessary details. Chat: {chat}",
-                temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
-        else:
-            print('\nAI response:\n')
-            answer = self.df.dec_message(Comunnicate(
-                prompt=f"תענה בעברית בלבד וסכם את השיחה הבאה באופן עובדתי. אל תשאל שאלות. כלול את שמות כל המשתתפים. אל תוסיף דעות, הסברים או עצות. שיחה: {chat}",
-                temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
-        return answer
+    def sum_chat(self, lang, start_time, end_time):
+        chat = self.get_df(start_time,end_time)
+        if chat is not None:
+            if lang == '1':
+                print('\nAI response:\n')
+                answer = self.df.dec_message(Comunnicate(
+                    prompt=f"Summarize the following chat factually in **no more than 2 sentences**. Do not ask questions. Be concise. Do not add opinions, explanations, or unnecessary details. Chat: {chat[1]}",
+                    temperature=0.3, max_tokens=200, content='You are a smart summarize expert')) + '.'
+            else:
+                print('\nAI response:\n')
+                answer = self.df.dec_message(Comunnicate(
+                    prompt = f"השב בעברית בלבד. השב רק בשני משפטים. אל תוסיף הסברים או דעות. הזכר את כל שמות המשתתפים. שיחה: {chat[1]}",
+                    temperature=0.4, max_tokens=200, content='You are a smart summarize expert')) + '.'
+            return 'Participants: '+get_participants(chat[0]) + '<br><br>' + answer.replace('.', '.<br>')
+        return ''
 
-    def arg_chat(self, lang):
-        chat = self.get_df()
+    def arg_chat(self, lang, start_time,end_time):
+        chat = self.get_df(start_time,end_time)[1]
         if lang == '1':
             print('\nAI response:\n')
             answer = self.df.dec_message(Comunnicate(
                 prompt=f"Analyze the following conversation factually and determine who is correct based on the statements given. Provide only the name of the correct person and a two-sentences short explanation. Do not add opinions. Chat: {chat}",
-                temperature=0.3, max_tokens=200, content='You are a smart summarize expert'))
+                temperature=0.3, max_tokens=200, content='You are a smart summarize expert')) + '.'
         else:
             print('\nAI response:\n')
             answer = self.df.dec_message(Comunnicate(
                 prompt=f"תנתח את השיחה הבאה באופן עובדתי ותקבע מי צודק בהתבסס על הטענות שנאמרו. ציין רק את שם האדם הצודק ותן הסבר במשפט אחד בלבד. אל תוסיף דעות. שיחה: {chat}",
-                temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
+                temperature=0.4, max_tokens=200, content='You are a smart summarize expert')) + '.'
         return answer
 
-    def get_df(self):
-        while True:
-            try:
-                start = self.enter_date_time()
-                chatdf = self.df.start_from(*start)
-                while True:
-                    end = input('1 for end time or leave blank in order to auto-end (after 4500 characters):\n')
-                    if end == '1':
-                        end = self.enter_date_time(end=True)
-                        chatdf = self.df.end_at(*end, chatdf)
-                        break
-                    elif end == '':
-                        break
-                return self.df.df_to_text(chatdf)
-            except DateError as e:
-                print(e)
+    def get_df(self,start_time ,end_time):
+        try:
+            chatdf = self.df.start_from(start_time)
+            if end_time is not None:
+                chatdf = self.df.end_at(end_time, chatdf)
+            return chatdf, self.df.df_to_text(chatdf)
+        except DateError as e:
+            return None
     def enter_date_time(self,end = False):
         valid_date = False
         while not valid_date:

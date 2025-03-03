@@ -30,6 +30,7 @@
 
             position: absolute;
             top: 30mm;
+            transform: scale(1.18)
         }
 
         .button {
@@ -54,10 +55,11 @@
         }
         .back-button {
             background-color: #0f6fc4; /* Darker Blue */
-            position: relative;
-            top: -10mm;
-            width: 110px;
+            position: absolute;
+            top: 110mm;
+            width: 115px;
             margin-top: 10px;
+            transform: scale(1.05)
         }
 
         .back-button:hover {
@@ -73,7 +75,7 @@
         <a href="/week_count" class="button">Message Count Per Week</a>
 
     </div>
-    <button class="button back-button" onclick="history.back()">Back</button>
+    <button class="button back-button" onclick="window.location.href='/'">Back</button>
 
 </body>
 </html>
