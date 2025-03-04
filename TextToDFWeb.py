@@ -4,6 +4,7 @@ from Exceptions import DateError
 from datetime import datetime, timedelta
 import os
 import zipfile
+from collections import Counter
 
 def get_participants(df):
     name_set = set()
@@ -43,6 +44,17 @@ class TextDF:
         self.df = self.df[self.df['Author'] != self.group_name]
         if enc:
             self.enc_Txt()
+
+    def find_common_words(self):
+        df = self.df.copy()
+        df_grouped = df.groupby('Author', as_index = False).agg({'Txt': ' '.join})
+        df_grouped['Txt'] = df_grouped['Txt'].apply(lambda x: x.split())
+        res_lst = []
+        res_dict = {}
+        for index, row in df_grouped.iterrows():
+            res_lst.append(f'{row['Author']}: {find_top_5(row['Txt'])}')
+            res_dict[row['Author']] = find_top_5(row['Txt'])
+        return res_dict.items()
 
     def extract_zip(self,zip_path):
         """Extracts the ZIP file and returns the extracted file path(s)."""
@@ -294,3 +306,12 @@ def find_end_of_week(date):
     while date1.day_of_week != 5: #5 is saturday in numeric.
         date1 = date1 + pd.Timedelta(days=1)
     return date1
+
+def find_top_5(words_list):
+    words_list = [x for x in words_list if len(x) > 3 and x not in ('omitted','image', 'audio','message', 'edited>', 'sticker', 'your','received', '<this>','view', '<this>', 'once')]
+    res_lst = tuple(Counter(words_list).most_common(5))
+    return res_lst
+    res_str = ''
+    for word in res_lst:
+        res_str += "\u200E" + f', "{word[0]}" - {word[1]}<br>'
+    return '<br>'+res_str[2:]

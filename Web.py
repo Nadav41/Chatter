@@ -145,6 +145,15 @@ def name_count():
         result += [f'{name}:  {count} messages.']
     return render_template("name count.html", result=result)
 
+@app.route("/word_count")
+def word_count():
+    user_id = get_user_id()
+    if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+        return render_template('error.html', message="No ZIP file has been uploaded yet!")
+    res_lst = user_data[user_id]["text_processor"].df.find_common_words()
+    print(res_lst)
+    return render_template("word count.html", result=res_lst)
+
 
 @app.route("/select_dates")
 def select_dates():
