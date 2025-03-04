@@ -74,6 +74,50 @@
         .button:hover {
             background-color: #1565c0;
         }
+                /* 🔥 Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+
+
+        }
+
+        .loading-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+
+            position: absolute;
+            top: 60mm;
+        }
+
+        /* 🔄 Spinner Animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #1e88e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
     </style>
 </head>
 <body>
@@ -102,6 +146,13 @@
             <button type="submit" class="button">Submit</button>
         </form>
     </div>
+    <!-- 🔥 Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            Processing... Please wait.
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -116,6 +167,8 @@
                         event.preventDefault(); // Stop form submission
                     }
                 }
+                // Show loading overlay when form is valid
+                document.getElementById("loading-overlay").style.display = "flex";
             });
         });
     </script>
