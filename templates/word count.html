@@ -39,16 +39,17 @@
       background: #bbdefb;
       padding: 15px;
       border-radius: 6px;
-      font-size: 30px;
+      font-size: 26px;
       text-align: left;
       color: #0d47a1;
       font-weight: bold;
       box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
       margin-bottom: 25px;
-      line-height: 1.4;
+      line-height: 1; /* Slightly reduced spacing */
+      direction: ltr;
     }
     .top5-item {
-      padding: 10px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #90caf9;
     }
     .top5-item:last-child {
@@ -56,10 +57,10 @@
     }
     .name {
       display: block;
-      font-size: 24px;
+      font-size: 28px;
       font-weight: bold;
       color: #093476;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
     }
     .word-count-list {
       list-style: none;
@@ -73,15 +74,35 @@
       font-size: 22px;
       padding: 5px 0;
     }
-    .word {
-      text-align: left;
-      color: #333;
-    }
-    .count {
-      text-align: right;
-      color: #093476;
-      font-weight: bold;
-      min-width: 60px;
+    .word-count-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 22px;
+          padding: 2px 0; /* Less padding to keep items closer */
+          white-space: nowrap; /* Prevents line breaks */
+      }
+
+      .word {
+          text-align: left;
+          color: #333;
+          font-weight: bold;
+          line-height: 1px;
+
+      }
+
+      .count {
+          text-align: left;
+          color: #093476;
+          font-weight: bold;
+          line-height: 1px;
+          margin-left: 8px; /* Small margin to keep a slight gap */
+          min-width: 600px; /* Ensures numbers are aligned properly */
+
+      }
+    .hyphen {
+      margin: 0 10px; /* Adds spacing for readability */
+      color: black;
     }
     .back-button {
       display: block;
@@ -105,7 +126,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>Message Count per Person</h2>
+    <h2>Top Word Count per Person</h2>
 
     <div class="top5-container">
       {% for entry in result %}
@@ -113,10 +134,9 @@
           <span class="name">{{ entry[0] }}</span>
           <ul class="word-count-list">
             {% for word, count in entry[1] %}
-              <li>
-                <span class="word">"{{ word }}"</span>
-                <span class="count">{{ count }}</span>
-              </li>
+              <li class="word-count-item">
+                <span class="word">"{{ word }}"</span> - <span class="count">{{ count }}</span>
+            </li>
             {% endfor %}
           </ul>
         </div>

@@ -33,6 +33,7 @@ def detect_language(text):
     return "rtl" if hebrew_count > english_count else "ltr"
 
 
+
 @app.route("/", methods=["GET"])
 def home():
     # דף הבית: מציג את הקובץ "zip extract.html" עם אפשרות העלאת קובץ ZIP.
@@ -145,13 +146,21 @@ def name_count():
         result += [f'{name}:  {count} messages.']
     return render_template("name count.html", result=result)
 
+@app.route("/time_windows")
+def time_windows():
+    user_id = get_user_id()
+    if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+        return render_template('error.html', message="No ZIP file has been uploaded yet!")
+    res_tup = user_data[user_id]["text_processor"].df.max_time_window()
+    return render_template("Time Window.html", result=res_tup)
+
 @app.route("/word_count")
 def word_count():
     user_id = get_user_id()
     if user_id not in user_data or user_data[user_id].get("text_processor") is None:
         return render_template('error.html', message="No ZIP file has been uploaded yet!")
     res_lst = user_data[user_id]["text_processor"].df.find_common_words()
-    print(res_lst)
+    user_data[user_id]["text_processor"].df.max_time_window()
     return render_template("word count.html", result=res_lst)
 
 

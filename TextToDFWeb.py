@@ -38,10 +38,12 @@ class TextDF:
         self.make_text(ready_str, enc)
 
         group_name = self.pop_group_name()
+        if len(self.__names) != 2:
+            self.df = self.df[self.df['Author'] != group_name]
         if self.group_name is None:
             self.group_name = group_name
         print(self.group_name)
-        self.df = self.df[self.df['Author'] != self.group_name]
+
         if enc:
             self.enc_Txt()
 
@@ -73,6 +75,20 @@ class TextDF:
 
     def get_names(self):
         return tuple(self.__names.keys())
+    def max_time_window(self):
+
+        df_copy = self.df.copy()
+        df_copy['Time Window'] = df_copy['Datetime'].dt.floor('2H')  # Floors to nearest 2-hour block
+
+        time_activity = df_copy.groupby(['Time Window', 'Author']).size().reset_index(name='Message Count')
+
+        most_active = time_activity.loc[time_activity.groupby('Author')['Message Count'].idxmax()]
+        most_active['Time Window'] = most_active['Time Window'].apply(lambda x: f"{x.strftime('%H:%M')} - {(x + timedelta(hours=2)).strftime('%H:%M')}")
+        active_tups = []
+        for index,row in most_active.iterrows():
+            active_tups.append((row['Author'], row['Time Window'], str(row['Message Count']) + ' total messages'))
+        # Display results
+        return tuple(active_tups)
     def pop_group_name(self):
         # Precompute regex pattern for names
         names_pattern = '|'.join(map(re.escape, self.__names))
@@ -308,8 +324,8 @@ def find_end_of_week(date):
     return date1
 
 def find_top_5(words_list):
-    words_list = [x for x in words_list if len(x) > 3 and x not in ('omitted','image', 'audio','message', 'edited>', 'sticker', 'your','received', '<this>','view', '<this>', 'once')]
-    res_lst = tuple(Counter(words_list).most_common(5))
+    words_list = [x for x in words_list if len(x) > 3 and x.count(x[0]) < len(x) - 2 and x not in ('omitted','image','You received a view once photo. For added privacy, you can', 'audio','was','added','message', 'edited>', 'sticker', 'your','<This','votes).OPTION','received', 'pages document','<This>','view', '<This>', 'once')]
+    res_lst = tuple(Counter(words_list).most_common(10))
     return res_lst
     res_str = ''
     for word in res_lst:
