@@ -70,7 +70,12 @@ def menu():
         user_data[user_id]["arg_res"] = None
         user_data[user_id]["start_date"] = None
         user_data[user_id]["end_date"] = None
-    return render_template('menu.html')
+    title = user_data[user_id]['text_processor'].df.group_name
+    if title == '':
+        name_list = user_data[user_id]['text_processor'].df.get_names()
+        if len(name_list) == 2:
+            title = f'{name_list[0]} | {name_list[1]}'
+    return render_template('menu.html', title = title)
 
 
 

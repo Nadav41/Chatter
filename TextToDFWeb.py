@@ -58,13 +58,15 @@ class TextDF:
         extracted_files = [os.path.join(self.extracted_folder, f) for f in os.listdir(self.extracted_folder)]
         return extracted_files
 
+    def get_names(self):
+        return tuple(self.__names.keys())
     def pop_group_name(self):
         # Precompute regex pattern for names
         names_pattern = '|'.join(map(re.escape, self.__names))
 
         # Compute mask in a single operation
         mask = ~self.df['Txt'].str.contains('changed the group description', na=False) & ~(
-                self.df['Txt'].str.contains('updated', na=False) &
+            (self.df['Txt'].str.contains('updated', na=False)| self.df['Txt'].str.contains('removed', na=False)) &
                 self.df['Txt'].str.contains(names_pattern, na=False)
         )
         # Extract removed authors before filtering
