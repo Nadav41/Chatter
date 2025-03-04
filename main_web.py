@@ -47,16 +47,21 @@ class interface:
     def sum_chat(self, lang, start_time, end_time):
         chat = self.get_df(start_time,end_time)
         if chat is not None:
+            txt = chat[1]
             if lang == '1':
                 print('\nAI response:\n')
                 answer = self.df.dec_message(Comunnicate(
-                    prompt=f"Summarize the following chat factually in **no more than 2 sentences**. Do not ask questions. Be concise. Do not add opinions, explanations, or unnecessary details. Chat: {chat[1]}",
-                    temperature=0.3, max_tokens=200, content='You are a smart summarize expert')) + '.'
+                    prompt=f"Summarize the following chat factually in **no more than 2 sentences**. Do not ask questions. Be concise. Do not add opinions, explanations, or unnecessary details. Chat: {txt}",
+                    temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
             else:
                 print('\nAI response:\n')
                 answer = self.df.dec_message(Comunnicate(
                     prompt = f"השב בעברית בלבד. השב רק בשני משפטים. אל תוסיף הסברים או דעות. הזכר את כל שמות המשתתפים. שיחה: {chat[1]}",
-                    temperature=0.4, max_tokens=200, content='You are a smart summarize expert')) + '.'
+                    temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
+            print(get_participants(chat[0]))
+            print('chat:' + txt)
+            print(answer)
+
             return 'Participants: '+get_participants(chat[0]) + '<br><br>' + answer.replace('.', '.<br>')
         return ''
 
@@ -79,7 +84,7 @@ class interface:
             chatdf = self.df.start_from(start_time)
             if end_time is not None:
                 chatdf = self.df.end_at(end_time, chatdf)
-            return chatdf, self.df.df_to_text(chatdf)
+            return chatdf, self.df.df_to_text(chatdf).replace('\r','').encode("utf-8").decode("utf-8")  # Normalize encoding
         except DateError as e:
             return None
     def enter_date_time(self,end = False):

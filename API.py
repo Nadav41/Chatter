@@ -5,7 +5,7 @@ from TextToDF import TextDF
 # tex = TextDF('/Users/nadav/Downloads/_chat 4 copy.txt',True)
 
 # Insert your API key below
-api_key = "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"
+api_key = "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"
 client = Groq(api_key=api_key)
 
 def open_txt():

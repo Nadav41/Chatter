@@ -19,21 +19,27 @@ def split_whatsapp_chat(chat_text):
     pattern = r'\[\d{2}/\d{2}/\d{4}, \d{1,}:\d{1,}:\d{1,}\]'
     # Split only at points where a new message starts
     messages = re.split(f'(?={pattern})', chat_text)
-
     return [msg.strip() for msg in messages if msg.strip()]
 
 class TextDF:
     def __init__(self, path = None, enc=False, ready_str = None):
+        self.__enc= enc
         self.extracted_folder = "extracted_files"
         if path is not None:
             txt_path = self.extract_zip(path)[0]
-        self.__txt = ready_str.replace('\n','.')
+        self.__txt = ready_str.replace('\n','.').replace('\r','')
         if ready_str is None:
             self.__txt = self.prepare_text(txt_path)
         data = {'Author': [] ,'Txt' :[],'Day' : [], 'Month' : [], 'Year' : [], 'Hour' : [], 'Minutes' : []}
         self.df = pd.DataFrame(data)
         self.__names = {}
+        self.group_name = None #will change in make_text if chat has been since creation
         self.make_text(ready_str, enc)
+
+        group_name = self.pop_group_name()
+        if self.group_name is None:
+            self.group_name = group_name
+        print(self.group_name)
         if enc:
             self.enc_Txt()
 
@@ -51,6 +57,24 @@ class TextDF:
         # Get the extracted file paths
         extracted_files = [os.path.join(self.extracted_folder, f) for f in os.listdir(self.extracted_folder)]
         return extracted_files
+
+    def pop_group_name(self):
+        # Precompute regex pattern for names
+        names_pattern = '|'.join(map(re.escape, self.__names))
+
+        # Compute mask in a single operation
+        mask = ~self.df['Txt'].str.contains('changed the group description', na=False) & ~(
+                self.df['Txt'].str.contains('updated', na=False) &
+                self.df['Txt'].str.contains(names_pattern, na=False)
+        )
+        # Extract removed authors before filtering
+        removed_authors = [i for i in self.df.loc[~mask, 'Author'].unique().tolist() if self.df.loc[mask][self.df['Author']==i].empty]
+
+        # Efficiently filter DataFrame
+        self.df = self.df.loc[mask].reset_index(drop=True)  # Drop unneeded index references
+        if removed_authors != []:
+            return removed_authors[0]  # Return removed authors
+        return ''
 
     def open_txt(self,path):
         with open(path, "r", encoding="utf-8") as file:
@@ -79,6 +103,9 @@ class TextDF:
             start = i.index(':')
             message = i[start + 2:]
             author = i[:start]
+            if 'Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to the' in message:
+                self.group_name = ' '.join(re.findall(r'(\S+)', author))
+                continue
             self.df.loc[len(self.df)] = self.enc(author, message, flag) + time
         self.df[["Year", "Month", "Day", "Hour", "Minutes"]] = self.df[["Year", "Month", "Day", "Hour", "Minutes"]].astype(int)
         # Convert dataframe timestamps to datetime objects
@@ -191,21 +218,22 @@ class TextDF:
 
         return df
     def dec_message(self,msg):
-        for key, item in self.__names.items():
-            msg = msg.replace(item, key)
-        dot_count = 0
-        i = 0
-        new = ''
-        while i < len(msg) - 1:
-            new += msg[i]
-            if msg[i] == '.':
-                if dot_count % 2 == 0:
-                    new += '\n'
-                    i+=1
-                dot_count += 1
-            i += 1
-
-        return new
+        if self.__enc:
+            for key, item in self.__names.items():
+                msg = msg.replace(item, key)
+            dot_count = 0
+            i = 0
+            new = ''
+            while i < len(msg) - 1:
+                new += msg[i]
+                if msg[i] == '.':
+                    if dot_count % 2 == 0:
+                        new += '\n'
+                        i+=1
+                    dot_count += 1
+                i += 1
+            return new
+        return msg
 
 
     def enc_message(self, msg):
@@ -224,7 +252,7 @@ class TextDF:
         if df is not None and not df.empty:
             str = ''
             for index, row in df.iterrows():
-                new = f"{row['Author']}: {row['Txt']}"
+                new = f" {row['Author']}: {row['Txt']}"
                 if len(str) + len(new) > 4500:
                     print(f'End of chat: {row['Day']}\\{row['Month']}\\{row['Year']}, {row['Hour']}:{row['Minutes']}')
                     break
@@ -238,6 +266,9 @@ class TextDF:
 
     def count_per_author(self):
         df = self.df.copy()
+
+
+        # Apply the mask and count messages per author
         counts = df['Author'].value_counts().to_dict()
         sum_counts = sum(counts.values())
         return sum_counts, counts

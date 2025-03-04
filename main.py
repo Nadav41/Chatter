@@ -59,6 +59,7 @@ class interface:
                 answer = self.df.dec_message(Comunnicate(
                     prompt=f"תענה בעברית בלבד וסכם את השיחה הבאה באופן עובדתי. אל תשאל שאלות. כלול את שמות כל המשתתפים. אל תוסיף דעות, הסברים או עצות. שיחה: {chat}",
                     temperature=0.4, max_tokens=200, content='You are a smart summarize expert'))
+            print(chat)
             print(answer)
             break
     def get_df(self):
@@ -140,7 +141,7 @@ class interface:
         except ValueError:
             raise ValueError("Invalid time! Please enter a valid time in HH MM format.\n")
 
-# inter = interface('/Users/nadav/Downloads/_chat 4 copy.txt', False)
+inter = interface('/Users/nadav/Downloads/_chat 18.txt', False)
 j = 0
 print('------------------------------------------------------------------------------------')
 # for i in inter.df.start_from(0, 2, 23,2,2025)['Txt']:
@@ -150,5 +151,5 @@ print('-------------------------------------------------------------------------
 # inter = interface('/Users/nadav/Downloads/_chat 15.txt', True)
 # print()
 # inter.df.count_by_week()
-# inter.sum_chat()
+inter.sum_chat()
 # print(inter.enter_date_time())

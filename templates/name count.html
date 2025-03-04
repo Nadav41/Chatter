@@ -82,7 +82,7 @@
             unicode-bidi: embed;
         }
         .top5-container p {
-            margin: 0; /* Fix first line spacing issue */
+            margin: -3; /* Fix first line spacing issue */
         }
         .top5-item {
             display: flex;
@@ -94,6 +94,7 @@
         }
 
         .top5-item .name {
+            margin-top: 8px;
             text-align: left;
             flex-grow: 0; /* Prevents name from stretching */
             white-space: nowrap; /* Prevents text from breaking into multiple lines */
@@ -109,7 +110,7 @@
         .top5-item .count {
             text-align: right;
             color: #093476;
-
+            margin-top: 10px;
             min-width: 80px; /* Ensures numbers are aligned properly */
         }
 
@@ -144,7 +145,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Message Count per Week</h2>
+        <h2>Message Count per Person</h2>
 
         <div class="report">
             <p>{{ result[0]  | safe }}</p>  <!-- Displays the first line (this week’s data) -->
