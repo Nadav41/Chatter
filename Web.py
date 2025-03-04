@@ -116,7 +116,20 @@ def week_count():
         return render_template('error.html', message="No ZIP file has been uploaded yet!")
 
     result = user_data[user_id]["text_processor"].df.count_by_week().split("\n")
+
     return render_template("message count.html", result=result)
+
+@app.route("/name_count")
+def name_count():
+    user_id = get_user_id()
+    if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+        return render_template('error.html', message="No ZIP file has been uploaded yet!")
+    sum, count = user_data[user_id]["text_processor"].df.count_per_author()
+    count = count.items()
+    result = [f'There was total of: {sum} messages.']
+    for name, count in count:
+        result += [f'{name}:  {count} messages.']
+    return render_template("name count.html", result=result)
 
 
 @app.route("/select_dates")

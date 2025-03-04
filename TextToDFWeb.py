@@ -113,6 +113,7 @@ class TextDF:
         "Harlow", "Onyx", "Vale", "Salem", "Denim", "Indigo", "Lake", "Paris", "Ridley", "Storm",
         "West", "Lior", "Echo", "Sparrow", "Cypress", "Horizon", "Zephyr", "Zen", "Nova", "Briar"]
         author = (' '.join(re.findall(r'(\S+)', author)))
+        self.__names[author] = ''
         if flag:
             if author not in self.__names:
                 self.__names[author] = self.__coded_names[len(self.__names)]
@@ -149,7 +150,7 @@ class TextDF:
 
         # Print current week info using the period's start and end dates
         res_str = ''
-        res_str +=f"This week ({current_week_period.start_time.strftime('%d/%m/%Y')} - {current_week_period.end_time.strftime('%d/%m/%Y')}): {current_week_count} messages\n"
+        res_str +=f"This week ({current_week_period.start_time.strftime('%d/%m/%Y')} - {current_week_period.end_time.strftime('%d/%m/%Y')}):<br>{current_week_count} messages\n"
 
         # Sort the weeks by message count in descending order and take the top 5 weeks
         top_weeks = weekly_counts.sort_values(by="Message_Count", ascending=False).head(5).reset_index(drop=True)
@@ -234,6 +235,12 @@ class TextDF:
     def get_last_date_str(self):
         last_row = self.df.iloc[-1]
         return f'{last_row['Hour']}:{last_row['Minutes']}, {last_row['Day']}\\{last_row['Month']}\\{last_row['Year']}'
+
+    def count_per_author(self):
+        df = self.df.copy()
+        counts = df['Author'].value_counts().to_dict()
+        sum_counts = sum(counts.values())
+        return sum_counts, counts
 
 def week_start_end(date):
     if date.day_of_week != 6:
