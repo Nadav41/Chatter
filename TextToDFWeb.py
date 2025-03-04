@@ -40,6 +40,7 @@ class TextDF:
         if self.group_name is None:
             self.group_name = group_name
         print(self.group_name)
+        self.df = self.df[self.df['Author'] != self.group_name]
         if enc:
             self.enc_Txt()
 

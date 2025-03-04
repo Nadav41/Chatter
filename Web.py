@@ -3,6 +3,7 @@ from Exceptions import DateError
 from flask import Flask, request, render_template, redirect, url_for, session, jsonify
 from main_web import interface
 from dateutil import parser
+import datetime
 import os
 import uuid
 
@@ -95,7 +96,15 @@ def sum_eng():
     if sum_res == '':
         return render_template('error.html', message="No messages in time range.")
     text_direction = detect_language(sum_res)
-    return render_template('text_template.html', page_title='AI Summary of Chat', page_content=sum_res, direction=text_direction)
+    date_tuple = (user_data[user_id]["start_date"],user_data[user_id]["end_date"])
+    print(date_tuple)
+    dates_str = f'{datetime.datetime(date_tuple[0][4], date_tuple[0][3], date_tuple[0][2], date_tuple[0][0], date_tuple[0][1]).strftime("%d/%m/%Y %H:%M")} - '
+    if date_tuple[1] is None:
+        dates_str += 'Today'
+    else:
+        dates_str += datetime.datetime(date_tuple[1][4], date_tuple[1][3], date_tuple[1][2], date_tuple[1][0], date_tuple[1][1]).strftime("%d/%m/%Y %H:%M")
+    print(dates_str)
+    return render_template('text_template.html', page_title='AI Summary of Chat', page_content=sum_res, direction=text_direction, dates = dates_str)
     # except DateError as e:
     #     return render_template('error.html', message="No Message since: " + str(user_data[user_id]["start_date"]))
 
@@ -151,9 +160,9 @@ def process_dates():
 
     start_dt = parser.parse(start_datetime)
     end_dt = datetime.datetime.now()  # Default to now if no end date is given
-
     if end_datetime != '':
         end_dt = parser.parse(end_datetime)
+
 
     user_data[user_id]["start_date"] = (start_dt.hour, start_dt.minute, start_dt.day, start_dt.month, start_dt.year)
     user_data[user_id]["end_date"] = (end_dt.hour, end_dt.minute, end_dt.day, end_dt.month, end_dt.year)
