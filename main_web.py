@@ -2,6 +2,29 @@ from TextToDFWeb import TextDF, get_participants
 from datetime import datetime
 from Exceptions import DateError
 from API import Comunnicate
+import re
+
+def extract_reduced_conversation(text): #Taken form ChatGPT, takes 3 sentences out of 9
+    # Split text into sentences using ":" as the primary separator
+    sentences = re.split(r'(?<=[:])\s*', text)  # Keeps ":" at the end of each sentence
+
+    # Process in chunks of 9, selecting 3 strategically
+    reduced_sentences = []
+    for i in range(0, len(sentences), 9):  # Process in blocks of 9
+        chunk = sentences[i:i + 9]  # Get 9 sentences (or fewer at the end)
+
+        if len(chunk) >= 3:
+            # Pick sentences: first, middle, and last (adjust if fewer than 9)
+            reduced_sentences.append(chunk[0])  # First sentence
+            reduced_sentences.append(chunk[len(chunk) // 2])  # Middle sentence
+            reduced_sentences.append(chunk[-1])  # Last sentence
+        else:
+            # If less than 3 remaining, just add all
+            reduced_sentences.extend(chunk)
+
+    # Join the reduced sentences back
+    reduced_text = " ".join(reduced_sentences)
+    return reduced_text
 now = datetime.now()
 print(now)
 
@@ -90,7 +113,8 @@ class interface:
     def is_funny(self, name):
         df = self.df.specific_author(name)
         chat = self.df.df_to_text(df).replace('\r','')
-        print(chat)
+        chat = extract_reduced_conversation(chat)
+        print(len(chat))
         answer1 = self.df.dec_message(Comunnicate(
             prompt=f"**Begginer English level** Analyze the personality and communication style of the author based on the messages provided. Describe their vibe **in one sentence**, making it unique to their tone, word choice, and message patterns. Avoid generic statements. Messages: {chat}",
             temperature=0.4, max_tokens=100,
@@ -102,6 +126,7 @@ class interface:
 
         print(answer1)
         print(answer2)
+        return answer1,answer2
 
     def enter_date_time(self,end = False):
         valid_date = False

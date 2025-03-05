@@ -7,7 +7,6 @@ import datetime
 import os
 import uuid
 
-
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Required for sessions
 
@@ -72,6 +71,7 @@ def menu():
         user_data[user_id]["arg_res"] = None
         user_data[user_id]["start_date"] = None
         user_data[user_id]["end_date"] = None
+        user_data[user_id]["chosen_name"] = None
     title = user_data[user_id]['text_processor'].df.group_name
     if title == '':
         name_list = user_data[user_id]['text_processor'].df.get_names()
@@ -146,13 +146,37 @@ def name_count():
         result += [f'{name}:  {count} messages.']
     return render_template("name count.html", result=result)
 
+
+@app.route("/author_sum")
+def author_sum():
+    user_id = get_user_id()
+
+    # Ensure user data exists
+    if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+        return render_template('error.html', message="No ZIP file has been uploaded yet!")
+
+    # Get the selected name from the query params (from JavaScript)
+    selected_option = request.args.get("choice")
+
+    if selected_option:
+        user_data[user_id]["chosen_name"] = selected_option  # ✅ Store the selected name
+
+    # Ensure a name is selected
+    if user_data[user_id].get("chosen_name") is None:
+        return redirect(url_for('select_name', next_action='author_sum'))  # Ask user to select
+
+    # Get the chosen name & analyze the data
+    name = user_data[user_id]["chosen_name"]
+    res_tup = user_data[user_id]["text_processor"].is_funny(name)  # ✅ Get results
+
+    return render_template("author sum.html", result=res_tup)  # ✅ Display results
+
 @app.route("/time_windows")
 def time_windows():
     user_id = get_user_id()
     if user_id not in user_data or user_data[user_id].get("text_processor") is None:
         return render_template('error.html', message="No ZIP file has been uploaded yet!")
     res_tup = user_data[user_id]["text_processor"].df.max_time_window()
-    user_data[user_id]["text_processor"].is_funny('סמואל')
     return render_template("Time Window.html", result=res_tup)
 
 @app.route("/word_count")
@@ -164,6 +188,13 @@ def word_count():
     user_data[user_id]["text_processor"].df.max_time_window()
     return render_template("word count.html", result=res_lst)
 
+
+@app.route("/select_name")
+def select_name():
+    user_id = get_user_id()
+    options = user_data[user_id]["text_processor"].df.get_names()
+    next_action = request.args.get("next_action", "author_sum")  # Default to sum_eng if missing
+    return render_template("name options.html", next_action= next_action ,options = options)
 
 @app.route("/select_dates")
 def select_dates():
