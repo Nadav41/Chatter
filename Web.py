@@ -152,6 +152,7 @@ def time_windows():
     if user_id not in user_data or user_data[user_id].get("text_processor") is None:
         return render_template('error.html', message="No ZIP file has been uploaded yet!")
     res_tup = user_data[user_id]["text_processor"].df.max_time_window()
+    user_data[user_id]["text_processor"].is_funny('סמואל')
     return render_template("Time Window.html", result=res_tup)
 
 @app.route("/word_count")

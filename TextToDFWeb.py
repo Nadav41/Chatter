@@ -58,6 +58,12 @@ class TextDF:
             res_dict[row['Author']] = find_top_5(row['Txt'])
         return res_dict.items()
 
+    def specific_author(self, name):
+        df = self.df.copy()
+        df = df[df['Author'] == name]
+        # df['Author'] = df['Author'].apply(lambda x: 'MSG:')
+        return df
+
     def extract_zip(self,zip_path):
         """Extracts the ZIP file and returns the extracted file path(s)."""
         if not zipfile.is_zipfile(zip_path):
@@ -285,7 +291,6 @@ class TextDF:
             for index, row in df.iterrows():
                 new = f" {row['Author']}: {row['Txt']}"
                 if len(str) + len(new) > 4500:
-                    print(f'End of chat: {row['Day']}\\{row['Month']}\\{row['Year']}, {row['Hour']}:{row['Minutes']}')
                     break
                 str += new
             return str

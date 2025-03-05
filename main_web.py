@@ -87,6 +87,22 @@ class interface:
             return chatdf, self.df.df_to_text(chatdf).replace('\r','').encode("utf-8").decode("utf-8")  # Normalize encoding
         except DateError as e:
             return None
+    def is_funny(self, name):
+        df = self.df.specific_author(name)
+        chat = self.df.df_to_text(df).replace('\r','')
+        print(chat)
+        answer1 = self.df.dec_message(Comunnicate(
+            prompt=f"**Begginer English level** Analyze the personality and communication style of the author based on the messages provided. Describe their vibe **in one sentence**, making it unique to their tone, word choice, and message patterns. Avoid generic statements. Messages: {chat}",
+            temperature=0.4, max_tokens=100,
+            content="You specialize in analyzing personalities and providing precise, distinct, and insightful summaries. giving simple understandable words"))
+        answer2 = self.df.dec_message(Comunnicate(
+            prompt=f"**Easy English** Summarize the general tone and subjects of the chats sent. **two sentences**. Messages: {chat}",
+            temperature=0.5, max_tokens=100,
+            content="You specialize in analyzing chats and providing precise, distinct, and insightful summaries. giving simple understandable words"))
+
+        print(answer1)
+        print(answer2)
+
     def enter_date_time(self,end = False):
         valid_date = False
         while not valid_date:
