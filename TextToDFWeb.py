@@ -54,7 +54,9 @@ class TextDF:
         res_lst = []
         res_dict = {}
         for index, row in df_grouped.iterrows():
-            res_lst.append(f'{row['Author']}: {find_top_5(row['Txt'])}')
+            aut = row['Author']
+            res = find_top_5(row['Txt'])
+            res_lst.append(f'{aut}: {res}')
             res_dict[row['Author']] = find_top_5(row['Txt'])
         return res_dict.items()
 
@@ -298,8 +300,7 @@ class TextDF:
 
     def get_last_date_str(self):
         last_row = self.df.iloc[-1]
-        return f'{last_row['Hour']}:{last_row['Minutes']}, {last_row['Day']}\\{last_row['Month']}\\{last_row['Year']}'
-
+        return f"{last_row['Hour']}:{last_row['Minutes']}, {last_row['Day']}\\{last_row['Month']}\\{last_row['Year']}"
     def count_per_author(self):
         df = self.df.copy()
 
@@ -309,12 +310,12 @@ class TextDF:
         sum_counts = sum(counts.values())
         return sum_counts, counts
 
-def week_start_end(date):
-    if date.day_of_week != 6:
-        date = date - timedelta(days=date.weekday() + 1)
-    end = find_end_of_week(date).strftime("%d/%m/%Y")
-    date = date.strftime("%d/%m/%Y")
-    return dt.date
+# def week_start_end(date):
+#     if date.day_of_week != 6:
+#         date = date - timedelta(days=date.weekday() + 1)
+#     end = find_end_of_week(date).strftime("%d/%m/%Y")
+#     date = date.strftime("%d/%m/%Y")
+#     return dt.date
 
 
 def same_week(date1, date2):

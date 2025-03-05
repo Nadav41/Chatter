@@ -4,4 +4,4 @@ class DateError(Exception):
         self.time = [str(i) for i in time_tup]
 
     def __str__(self):
-        return f"Invalid date, no texts since {':'.join(self.time)}, {'\\'.join(self.date)}."
+        return f"Invalid date."

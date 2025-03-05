@@ -1,5 +1,4 @@
 from groq import Groq
-from TextToDF import TextDF
 #realapi- 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
 #trialapi - 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
 # tex = TextDF('/Users/nadav/Downloads/_chat 4 copy.txt',True)
