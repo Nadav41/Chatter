@@ -62,6 +62,10 @@ def process_text():
 
     return jsonify({"message": "Processor created", "text": extracted_text})
 
+@app.route("/manual")
+def manual():
+    return render_template("Manual.html")
+
 @app.route('/menu')
 def menu():
     user_id = get_user_id()
