@@ -20,7 +20,7 @@ def Comunnicate(prompt, client=Groq(api_key=api_key),
                 content="You are a neutral AI summarizer. Include all names, avoid opinions, and do not ask follow-up questions."):
     completion = client.chat.completions.create(
         temperature=temperature,  # Lower for deterministic output
-        model="mixtral-8x7b-32768",
+        model="llama-3.3-70b-versatile",
         messages=[
             {"role": "system", "content": content},
             {"role": "user", "content": prompt}
