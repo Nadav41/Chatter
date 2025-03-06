@@ -37,7 +37,9 @@ class TextDF:
         self.group_name = None #will change in make_text if chat has been since creation
         self.make_text(ready_str, enc)
 
-        group_name = self.pop_group_name() or self.group_name
+        group_name = self.pop_group_name()
+        if self.group_name is not None:
+            group_name = self.group_name
         if len(self.__names) != 2:
             self.df = self.df[self.df['Author'] != group_name]
             self.__names.pop(group_name,None)
