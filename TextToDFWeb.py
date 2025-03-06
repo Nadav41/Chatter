@@ -40,6 +40,8 @@ class TextDF:
         group_name = self.pop_group_name()
         if len(self.__names) != 2:
             self.df = self.df[self.df['Author'] != group_name]
+
+            self.__names.pop(group_name,None)
         if self.group_name is None:
             self.group_name = group_name
         print(self.group_name)
@@ -50,6 +52,8 @@ class TextDF:
     def find_common_words(self):
         df = self.df.copy()
         df_grouped = df.groupby('Author', as_index = False).agg({'Txt': ' '.join})
+        if len(self.__names) != 2:
+            df_grouped = df_grouped[df_grouped['Author'] != self.group_name]
         df_grouped['Txt'] = df_grouped['Txt'].apply(lambda x: x.split())
         res_lst = []
         res_dict = {}
@@ -83,20 +87,33 @@ class TextDF:
 
     def get_names(self):
         return tuple(self.__names.keys())
+
     def max_time_window(self):
-
         df_copy = self.df.copy()
-        df_copy['Time Window'] = df_copy['Datetime'].dt.floor('2H')  # Floors to nearest 2-hour block
+        df_copy['Time Window'] = (df_copy['Datetime'].dt.hour // 2) * 2
+        df_copy['Time Window'] = df_copy['Time Window'].apply(lambda x: f"{x:02d}:00")
+        # Count messages per time window and author
+        time_activity = df_copy.groupby(['Author', 'Time Window']).size().reset_index(name='Message Count')
 
-        time_activity = df_copy.groupby(['Time Window', 'Author']).size().reset_index(name='Message Count')
+        most_active_idx = time_activity.groupby('Author')['Message Count'].idxmax().dropna()
 
-        most_active = time_activity.loc[time_activity.groupby('Author')['Message Count'].idxmax()]
-        most_active['Time Window'] = most_active['Time Window'].apply(lambda x: f"{x.strftime('%H:%M')} - {(x + timedelta(hours=2)).strftime('%H:%M')}")
-        active_tups = []
-        for index,row in most_active.iterrows():
-            active_tups.append((row['Author'], row['Time Window'], str(row['Message Count']) + ' total messages'))
-        # Display results
+        if most_active_idx.empty:
+            return ()  # Return empty tuple if no valid data
+
+        most_active = time_activity.loc[most_active_idx]
+        if len(self.__names) != 2:
+            most_active = most_active[most_active['Author'] != self.group_name]
+        # Format the time window to include the end time of the 2-hour period
+        most_active['Time Window'] = most_active['Time Window'].apply(
+            lambda x: f"{x} - {int(x[:2]) + 2:02d}:00"
+        )
+        active_tups = [
+            (row['Author'], row['Time Window'], f"{row['Message Count']} total messages")
+            for _, row in most_active.iterrows()
+        ]
+
         return tuple(active_tups)
+
     def pop_group_name(self):
         # Precompute regex pattern for names
         names_pattern = '|'.join(map(re.escape, self.__names))
@@ -303,10 +320,9 @@ class TextDF:
         return f"{last_row['Hour']}:{last_row['Minutes']}, {last_row['Day']}\\{last_row['Month']}\\{last_row['Year']}"
     def count_per_author(self):
         df = self.df.copy()
-
-
-        # Apply the mask and count messages per author
         counts = df['Author'].value_counts().to_dict()
+        if len(self.__names) != 2:
+            df = df[df['Author'] != self.group_name]
         sum_counts = sum(counts.values())
         return sum_counts, counts
 

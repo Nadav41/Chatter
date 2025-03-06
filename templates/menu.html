@@ -50,7 +50,7 @@
         .back-button {
             background-color: #0f6fc4;
             position: absolute;
-            top: 170mm;
+            top: 195mm;
             max-width: 115px;
             margin-top: 10px;
             transform: scale(1.05);
@@ -59,6 +59,21 @@
             animation: fadeIn 0.6s ease-out forwards; /* Fade in */
         }
 
+        h3 {
+            margin-top: -20px;
+            margin-bottom: -4px;
+            font-size: 20px;
+
+
+        }
+
+        h3.Disclaimer {
+            margin-top: 2px;
+            margin-bottom: 2px;
+            font-size: 15px;
+
+
+        }
 
         /* Animation Keyframes */
         @keyframes fadeSlideUp {
@@ -113,9 +128,13 @@
     <h1 class="title">{{title}}</h1>
     <div class="menu-box">
         <h2>Select an Action</h2>
+        <h3>AI Features:</h3>
         <a href="/sum_eng" class="button">Summarize Chat - AI</a>
         <a href="/arg_eng" class="button">Settle an Argument - AI</a>
         <a href="/author_sum" class="button">Know your friend - AI</a>
+        <h3 class="Disclaimer">*Due to free usage, AI features can take from a second to 2 minutes per request.</h3>
+
+        <h3><br>Regular Features:</h3>
         <a href="/week_count" class="button">Message Count Per Week</a>
         <a href="/name_count" class="button">Messages per Author</a>
         <a href="/word_count" class="button">Top Words per Author</a>

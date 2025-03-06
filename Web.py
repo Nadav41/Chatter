@@ -189,7 +189,6 @@ def word_count():
     if user_id not in user_data or user_data[user_id].get("text_processor") is None:
         return render_template('error.html', message="No ZIP file has been uploaded yet!")
     res_lst = user_data[user_id]["text_processor"].df.find_common_words()
-    user_data[user_id]["text_processor"].df.max_time_window()
     return render_template("word count.html", result=res_lst)
 
 

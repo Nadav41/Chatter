@@ -9,7 +9,7 @@
 #
 #     # Regular expression to detect message start: [DD/MM/YYYY, HH:MM:SS]
 #     pattern = r'\[\d{2}/\d{2}/\d{4}, \d{1,}:\d{1,}:\d{1,}\]'
-#     # Split only at points where a new message starts
+#     # Split only at points where a new messagxe starts
 #     messages = re.split(f'(?={pattern})', chat_text)
 #
 #     return [msg.strip() for msg in messages if msg.strip()]
