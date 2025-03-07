@@ -202,7 +202,7 @@ def is_funny():
         name = user_data[user_id]["chosen_name"]
         res_tup = user_data[user_id]["text_processor"].is_funny(name)  # ✅ Get results
 
-        return render_template("is funny.html", result=res_tup)  # ✅ Display results
+        return render_template("is funny.html", result=res_tup, name = name)  # ✅ Display results
     except:
          return render_template('error.html', message="Out of free AI tokens.. Try later!")
 @app.route("/time_windows")
