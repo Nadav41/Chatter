@@ -38,15 +38,15 @@ class TextDF:
         self.make_text(ready_str, enc)
 
         group_name = self.pop_group_name()
-        if self.group_name is not None:
-            group_name = self.group_name
-        if len(self.__names) != 2:
-            self.df = self.df[self.df['Author'] != group_name]
-            self.__names.pop(group_name,None)
-            print(self.__names.keys())
-        if self.group_name is None:
-            self.group_name = group_name
-        print(self.group_name)
+        # if self.group_name is not None:
+        #     group_name = self.group_name
+        # if len(self.__names) != 2:
+        #     self.df = self.df[self.df['Author'] != group_name]
+        #     self.__names.pop(group_name,None)
+        #     print(self.__names.keys())
+        # if self.group_name is None:
+        #     self.group_name = group_name
+        # print(self.group_name)
 
         if enc:
             self.enc_Txt()
@@ -161,7 +161,7 @@ class TextDF:
             start = i.index(':')
             message = i[start + 2:]
             author = i[:start]
-            if 'Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to the' in message:
+            if 'Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to the' in message or "ההודעות והשיחות מוצפנות מקצה לקצה. לאף אחד" in message:
                 self.group_name = ' '.join(re.findall(r'(\S+)', author))
                 continue
             self.df.loc[len(self.df)] = self.enc(author, message, flag) + time
