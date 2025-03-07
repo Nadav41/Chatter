@@ -14,12 +14,15 @@ def get_participants(df):
         name_set.add(name)
     return ', '.join(list(name_set))
 def split_whatsapp_chat(chat_text):
-    chat_text = chat_text.replace("\u200E", "").replace("\u200F", "").replace('\n','.')
+    chat_text = chat_text.replace("\u200E", "").replace("\u200F", "").replace('\n','.').replace('‬','').replace('\r','.')
 
     # Regular expression to detect message start: [DD/MM/YYYY, HH:MM:SS]
     pattern = r'\[\d{2}/\d{2}/\d{4}, \d{1,}:\d{1,}:\d{1,}\]'
     # Split only at points where a new message starts
     messages = re.split(f'(?={pattern})', chat_text)
+    if len(messages) == 1:
+        pattern = r'\[\d{2}.\d{2}.\d{4}, \d{1,}:\d{1,}:\d{1,}\]'
+        messages = re.split(f'(?={pattern})', chat_text)
     return [msg.strip() for msg in messages if msg.strip()]
 
 class TextDF:
@@ -38,15 +41,15 @@ class TextDF:
         self.make_text(ready_str, enc)
 
         group_name = self.pop_group_name()
-        # if self.group_name is not None:
-        #     group_name = self.group_name
-        # if len(self.__names) != 2:
-        #     self.df = self.df[self.df['Author'] != group_name]
-        #     self.__names.pop(group_name,None)
-        #     print(self.__names.keys())
-        # if self.group_name is None:
-        #     self.group_name = group_name
-        # print(self.group_name)
+        if self.group_name is not None:
+            group_name = self.group_name
+        if len(self.__names) != 2:
+            self.df = self.df[self.df['Author'] != group_name]
+            self.__names.pop(group_name,None)
+            print(self.__names.keys())
+        if self.group_name is None:
+            self.group_name = group_name
+        print(self.group_name)
 
         if enc:
             self.enc_Txt()
@@ -121,10 +124,12 @@ class TextDF:
         names_pattern = '|'.join(map(re.escape, self.__names))
 
         # Compute mask in a single operation
-        mask = ~self.df['Txt'].str.contains('changed the group description', na=False) & ~(
+        mask = ~(self.df['Txt'].str.contains('changed the group description', na=False) & ~(
             (self.df['Txt'].str.contains('updated', na=False)| self.df['Txt'].str.contains('removed', na=False)) &
-                self.df['Txt'].str.contains(names_pattern, na=False)
-        )
+                self.df['Txt'].str.contains(names_pattern, na=False)) & (self.df['Txt'].str.contains('צורפת על ידי', na=False) & ~(
+            (self.df['Txt'].str.contains('updated', na=False)| self.df['Txt'].str.contains('removed', na=False)) &
+                self.df['Txt'].str.contains(names_pattern, na=False))))
+
         # Extract removed authors before filtering
         removed_authors = [i for i in self.df.loc[~mask, 'Author'].unique().tolist() if self.df.loc[mask][self.df['Author']==i].empty]
 
@@ -161,7 +166,7 @@ class TextDF:
             start = i.index(':')
             message = i[start + 2:]
             author = i[:start]
-            if 'Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to the' in message or "ההודעות והשיחות מוצפנות מקצה לקצה. לאף אחד" in message:
+            if 'Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to the' in message or "ההודעות והשיחות מוצפנות מקצה לקצה. לאף אחד מחוץ לצ'אט הזה" in message:
                 self.group_name = ' '.join(re.findall(r'(\S+)', author))
                 continue
             self.df.loc[len(self.df)] = self.enc(author, message, flag) + time
