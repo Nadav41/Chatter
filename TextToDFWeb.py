@@ -348,7 +348,7 @@ def find_end_of_week(date):
     return date1
 
 def find_top_5(words_list):
-    words_list = [x for x in words_list if len(x) > 3 and x.count(x[0]) < len(x) - 2 and x not in ('omitted','image','You received a view once photo. For added privacy, you can', 'audio','was','added','message', 'edited>', 'sticker', 'your','<This','votes).OPTION','received', 'pages document','<This>','view', '<This>', 'once')]
+    words_list = [x for x in words_list if len(x) > 3 and x.count(x[0]) < len(x) - 2 and x not in ('omitted','image','You received a view once photo. For added privacy, you can', 'audio','was','added','message', 'edited>', 'sticker', 'your','<This','votes).OPTION','received', 'pages document','<This>','view', '<This>', 'once', 'For added privacy, you can','only open it on your phone.', 'privacy,', 'only', 'open', 'phone.','photo.')]
     res_lst = tuple(Counter(words_list).most_common(10))
     return res_lst
     res_str = ''
