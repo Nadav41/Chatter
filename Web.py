@@ -87,47 +87,49 @@ def menu():
 
 @app.route('/sum_eng')
 def sum_eng():
-    # try:
-    user_id = get_user_id()
-    if user_id not in user_data or user_data[user_id].get("text_processor") is None:
-        return render_template('error.html', message="No ZIP file was uploaded.")
+    try:
+        user_id = get_user_id()
+        if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+            return render_template('error.html', message="No ZIP file was uploaded.")
 
-    if user_data[user_id].get("start_date") is None or user_data[user_id].get("end_date") is None:
-        return redirect(url_for('select_dates', next_action='sum_eng'))
+        if user_data[user_id].get("start_date") is None or user_data[user_id].get("end_date") is None:
+            return redirect(url_for('select_dates', next_action='sum_eng'))
 
-    tp = user_data[user_id]["text_processor"]
-    sum_res = tp.sum_chat(lang='1', start_time=user_data[user_id]["start_date"], end_time=user_data[user_id]["end_date"])
-    user_data[user_id]["sum_res"] = sum_res
-    if sum_res == '':
-        return render_template('error.html', message="No messages in time range.")
-    text_direction = detect_language(sum_res)
-    date_tuple = (user_data[user_id]["start_date"],user_data[user_id]["end_date"])
-    print(date_tuple)
-    dates_str = f'{datetime.datetime(date_tuple[0][4], date_tuple[0][3], date_tuple[0][2], date_tuple[0][0], date_tuple[0][1]).strftime("%d/%m/%Y %H:%M")} - '
-    if date_tuple[1] is None:
-        dates_str += 'Today'
-    else:
-        dates_str += datetime.datetime(date_tuple[1][4], date_tuple[1][3], date_tuple[1][2], date_tuple[1][0], date_tuple[1][1]).strftime("%d/%m/%Y %H:%M")
-    print(dates_str)
-    return render_template('text_template.html', page_title='AI Summary of Chat', page_content=sum_res, direction=text_direction, dates = dates_str)
-    # except DateError as e:
-    #     return render_template('error.html', message="No Message since: " + str(user_data[user_id]["start_date"]))
+        tp = user_data[user_id]["text_processor"]
+        sum_res = tp.sum_chat(lang='1', start_time=user_data[user_id]["start_date"], end_time=user_data[user_id]["end_date"])
+        user_data[user_id]["sum_res"] = sum_res
+        if sum_res == '':
+            return render_template('error.html', message="No messages in time range.")
+        text_direction = detect_language(sum_res)
+        date_tuple = (user_data[user_id]["start_date"],user_data[user_id]["end_date"])
+        print(date_tuple)
+        dates_str = f'{datetime.datetime(date_tuple[0][4], date_tuple[0][3], date_tuple[0][2], date_tuple[0][0], date_tuple[0][1]).strftime("%d/%m/%Y %H:%M")} - '
+        if date_tuple[1] is None:
+            dates_str += 'Today'
+        else:
+            dates_str += datetime.datetime(date_tuple[1][4], date_tuple[1][3], date_tuple[1][2], date_tuple[1][0], date_tuple[1][1]).strftime("%d/%m/%Y %H:%M")
+        print(dates_str)
+        return render_template('text_template.html', page_title='AI Summary of Chat', page_content=sum_res, direction=text_direction, dates = dates_str)
+    except:
+         return render_template('error.html', message="Out of free AI tokens.. Try later!")
 
 @app.route('/arg_eng')
 def arg_eng():
-    user_id = get_user_id()
-    if user_id not in user_data or user_data[user_id].get("text_processor") is None:
-        return render_template('error.html', message="No ZIP file was uploaded.")
+    try:
+        user_id = get_user_id()
+        if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+            return render_template('error.html', message="No ZIP file was uploaded.")
 
-    if user_data[user_id].get("start_date") is None or user_data[user_id].get("end_date") is None:
-        return redirect(url_for('select_dates', next_action='arg_eng'))
+        if user_data[user_id].get("start_date") is None or user_data[user_id].get("end_date") is None:
+            return redirect(url_for('select_dates', next_action='arg_eng'))
 
-    tp = user_data[user_id]["text_processor"]
-    arg_res = tp.arg_chat(lang='1', start_time=user_data[user_id]["start_date"], end_time=user_data[user_id]["end_date"])
-    user_data[user_id]["arg_res"] = arg_res
+        tp = user_data[user_id]["text_processor"]
+        arg_res = tp.arg_chat(lang='1', start_time=user_data[user_id]["start_date"], end_time=user_data[user_id]["end_date"])
+        user_data[user_id]["arg_res"] = arg_res
 
-    return render_template('text_template.html', page_title='Who is Right?', page_content=arg_res)
-
+        return render_template('text_template.html', page_title='Who is Right?', page_content=arg_res)
+    except:
+         return render_template('error.html', message="Out of free AI tokens.. Try later!")
 @app.route("/week_count")
 def week_count():
     user_id = get_user_id()
@@ -153,28 +155,56 @@ def name_count():
 
 @app.route("/author_sum")
 def author_sum():
-    user_id = get_user_id()
+    try:
+        user_id = get_user_id()
 
-    # Ensure user data exists
-    if user_id not in user_data or user_data[user_id].get("text_processor") is None:
-        return render_template('error.html', message="No ZIP file has been uploaded yet!")
+        # Ensure user data exists
+        if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+            return render_template('error.html', message="No ZIP file has been uploaded yet!")
 
-    # Get the selected name from the query params (from JavaScript)
-    selected_option = request.args.get("choice")
+        # Get the selected name from the query params (from JavaScript)
+        selected_option = request.args.get("choice")
 
-    if selected_option:
-        user_data[user_id]["chosen_name"] = selected_option  # ✅ Store the selected name
+        if selected_option:
+            user_data[user_id]["chosen_name"] = selected_option  # ✅ Store the selected name
 
-    # Ensure a name is selected
-    if user_data[user_id].get("chosen_name") is None:
-        return redirect(url_for('select_name', next_action='author_sum'))  # Ask user to select
+        # Ensure a name is selected
+        if user_data[user_id].get("chosen_name") is None:
+            return redirect(url_for('select_name', next_action='author_sum'))  # Ask user to select
 
-    # Get the chosen name & analyze the data
-    name = user_data[user_id]["chosen_name"]
-    res_tup = user_data[user_id]["text_processor"].is_funny(name)  # ✅ Get results
+        # Get the chosen name & analyze the data
+        name = user_data[user_id]["chosen_name"]
+        res_tup = user_data[user_id]["text_processor"].sum_author(name)  # ✅ Get results
 
-    return render_template("author sum.html", result=res_tup)  # ✅ Display results
+        return render_template("author sum.html", result=res_tup, url = '/author_sum')  # ✅ Display results
+    except:
+         return render_template('error.html', message="Out of free AI tokens.. Try later!")
+@app.route("/is_funny")
+def is_funny():
+    try:
+        user_id = get_user_id()
 
+        # Ensure user data exists
+        if user_id not in user_data or user_data[user_id].get("text_processor") is None:
+            return render_template('error.html', message="No ZIP file has been uploaded yet!")
+
+        # Get the selected name from the query params (from JavaScript)
+        selected_option = request.args.get("choice")
+
+        if selected_option:
+            user_data[user_id]["chosen_name"] = selected_option  # ✅ Store the selected name
+
+        # Ensure a name is selected
+        if user_data[user_id].get("chosen_name") is None:
+            return redirect(url_for('select_name', next_action='is_funny'))  # Ask user to select
+
+        # Get the chosen name & analyze the data
+        name = user_data[user_id]["chosen_name"]
+        res_tup = user_data[user_id]["text_processor"].is_funny(name)  # ✅ Get results
+
+        return render_template("is funny.html", result=res_tup)  # ✅ Display results
+    except:
+         return render_template('error.html', message="Out of free AI tokens.. Try later!")
 @app.route("/time_windows")
 def time_windows():
     user_id = get_user_id()

@@ -110,11 +110,18 @@ class interface:
             return chatdf, self.df.df_to_text(chatdf).replace('\r','').encode("utf-8").decode("utf-8")  # Normalize encoding
         except DateError as e:
             return None
-    def is_funny(self, name):
+    def sum_author(self, name):
         df = self.df.specific_author(name)
         chat = self.df.df_to_text(df).replace('\r','')
         chat = extract_reduced_conversation(chat)
         print(len(chat))
+
+        answer = self.df.dec_message(Comunnicate(
+            prompt=f"**Humor Detection** Analyze the chat messages from this author and determine if they are funny. If they have any humor, sarcasm, or jokes, respond with 'Yes' and provide their funniest joke. If not, respond with 'No,' but try to find the most lighthearted or amusing thing they said and include it. Messages: {chat}",
+            temperature=0.8, max_tokens=100,
+            content="You specialize in detecting humor, sarcasm, and jokes in chat messages. Assume the author might be funny unless clearly not, and return their best joke or the most amusing thing they said in one sentence."
+        ))
+
         answer1 = self.df.dec_message(Comunnicate(
             prompt=f"**Begginer English level** Analyze the personality and communication style of the author based on the messages provided. Describe their vibe **in one sentence**, making it unique to their tone, word choice, and message patterns. Avoid generic statements. Messages: {chat}",
             temperature=0.4, max_tokens=100,
@@ -123,10 +130,20 @@ class interface:
             prompt=f"**Easy English** Summarize the general tone and subjects of the chats sent. **two sentences**. Messages: {chat}",
             temperature=0.5, max_tokens=100,
             content="You specialize in analyzing chats and providing precise, distinct, and insightful summaries. giving simple understandable words"))
-
-        print(answer1)
-        print(answer2)
         return answer1,answer2
+
+    def is_funny(self, name):
+        df = self.df.specific_author(name)
+        chat = self.df.df_to_text(df).replace('\r', '')
+        chat = extract_reduced_conversation(chat)
+        print(len(chat))
+
+        answer = self.df.dec_message(Comunnicate(
+            prompt=f"**Fair and Constructive Humor Check** Analyze the chat messages from this author and determine if they are funny. Since there are no messages from others, judge their humor based only on their writing style. Respond in **one sentence only**. If their messages contain humor, sarcasm, or jokes, say 'Yes' and include their funniest message as an example. If they try to be funny but don’t quite succeed, say 'Not really' and include an example of a message where they attempted humor but it wasn’t very strong. If there is no humor at all, say 'No' and provide a neutral and constructive statement about their writing style, avoiding harshness. Messages: {chat}",
+            temperature=0.7, max_tokens=75,
+            content="Give a fair and constructive assessment of the author's humor. Always provide an example from their messages. Avoid being overly harsh—if they try, acknowledge it politely. Respond in one sentence only."
+        ))
+        return answer
 
     def enter_date_time(self,end = False):
         valid_date = False

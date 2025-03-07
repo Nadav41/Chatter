@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <meta charset="UTF-8">
     <title>Frequent Time Windows</title>
     <style>
@@ -32,7 +33,6 @@
             position: absolute;
             top: 25mm;
         }
-
 
          h1 {
             margin-bottom: 10px;
@@ -101,8 +101,9 @@
         .back-button:hover {
             background-color: #1565c0;
         }
+
         @media screen and (max-width: 998px) {
-            body {
+                    body {
                 background-image: url('/static/Chatter Mobile Background.png'); /* ✅ Ensure correct path */
                 background-size: cover;  /* ✅ Ensures full coverage */
                 background-position: top center; /* ✅ Keeps it properly aligned */
@@ -138,8 +139,7 @@
     <h1>Author Summary</h1>
     <div class="top5-container">
 
-            <h3 class='sec'>{{result[0]}}<br></h3>
-            <h3 class='sec'>{{result[1]}}</h3>
+            <h3 class='sec'>{{result}}<br></h3>
         </div>
 
     <a class="back-button" onclick="window.location.href='/menu'">Back</a>

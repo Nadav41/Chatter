@@ -20,6 +20,11 @@
             margin: 0;
             padding: 20px;
         }
+        @media screen and (max-width: 998px) {
+            body {
+                background-image: url('static/Chatter Mobile Background.png');
+            }
+        }
 
         /* Container */
         .container {
@@ -149,7 +154,7 @@
             {% for option in options %}
                 <div class="option-item">
                     <span>{{ option }}</span>
-                    <button class="select-button">Choose</button>
+                    <button class="select-button" >Choose</button>
                 </div>
             {% endfor %}
         </div>
@@ -163,9 +168,9 @@
 
             // Show loading overlay
             document.getElementById('loading-overlay').style.display = 'flex';
-
+            let goto = "{{ next_action | safe }}";
             // Redirect to /author_sum with selected option
-            window.location.href = "/author_sum?choice=" + encodeURIComponent(selectedOption);
+            window.location.href = goto + "?choice=" + encodeURIComponent(selectedOption);
         });
     });
 </script>

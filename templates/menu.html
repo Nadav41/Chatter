@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
     <title>Chatter- Menu</title>
     <style>
         body {
@@ -17,8 +17,17 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            margin-bottom: 50px;
+
             padding: 20px;
+            padding-bottom: 50px;
+
             text-align: center;
+        }
+        @media screen and (max-width: 998px) {
+            body {
+                background-image: url('static/Chatter Mobile Background.png');
+            }
         }
 
         .menu-box {
@@ -50,7 +59,7 @@
         .back-button {
             background-color: #0f6fc4;
             position: absolute;
-            top: 195mm;
+            top: 210mm;
             max-width: 115px;
             margin-top: 10px;
             transform: scale(1.05);
@@ -129,9 +138,11 @@
     <div class="menu-box">
         <h2>Select an Action</h2>
         <h3>AI Features:</h3>
-        <a href="/sum_eng" class="button">Summarize Chat - AI</a>
-        <a href="/arg_eng" class="button">Settle an Argument - AI</a>
-        <a href="/author_sum" class="button">Know your friend - AI</a>
+        <a href="/sum_eng" class="button">Summarize Chat </a>
+        <a href="/arg_eng" class="button">Settle an Argument </a>
+        <a href="/author_sum" class="button">Know Your Friend </a>
+        <a href="/is_funny" class="button"> Is He Funny?</a>
+
         <h3 class="Disclaimer">*Due to free usage, AI features can take from a second to 2 minutes per request.</h3>
 
         <h3><br>Regular Features:</h3>
