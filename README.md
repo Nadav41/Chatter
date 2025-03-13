@@ -60,6 +60,9 @@ Visit the url: https://chatter-8sg6.onrender.com
 
 ![Funny](Screenshots/Screenshot5.png)
 
+![Funny](Screenshots/Screenshot2.png)
+
+
 
 
 
