@@ -13,6 +13,7 @@ def get_participants(df):
     for name in df['Author']:
         name_set.add(name)
     return ', '.join(list(name_set))
+
 def split_whatsapp_chat(chat_text):
     chat_text = chat_text.replace("\u200E", "").replace("\u200F", "").replace('\n','.').replace('‬','').replace('\r','.')
 
