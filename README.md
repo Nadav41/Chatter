@@ -55,7 +55,7 @@ Visit the url: https://chatter-8sg6.onrender.com
 ## Images:
 ![Home Screen](Screenshots/Home.png)
 
-![Menu](Screenshots/Menu.png)
+![Menu](Screenshots/Screenshot6.png)
 
 ![Funny](Screenshots/Screenshot4.png)
 
