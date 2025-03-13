@@ -27,14 +27,10 @@ def split_whatsapp_chat(chat_text):
     return [msg.strip() for msg in messages if msg.strip()]
 
 class TextDF:
-    def __init__(self, path = None, enc=False, ready_str = None):
+    def __init__(self, enc=False, ready_str = None):
         self.__enc= enc
         self.extracted_folder = "extracted_files"
-        if path is not None:
-            txt_path = self.extract_zip(path)[0]
         self.__txt = ready_str.replace('\n','.').replace('\r','')
-        if ready_str is None:
-            self.__txt = self.prepare_text(txt_path)
         data = {'Author': [] ,'Txt' :[],'Day' : [], 'Month' : [], 'Year' : [], 'Hour' : [], 'Minutes' : []}
         self.df = pd.DataFrame(data)
         self.__names = {}
@@ -76,20 +72,20 @@ class TextDF:
         # df['Author'] = df['Author'].apply(lambda x: 'MSG:')
         return df
 
-    def extract_zip(self,zip_path):
-        """Extracts the ZIP file and returns the extracted file path(s)."""
-        if not zipfile.is_zipfile(zip_path):
-            raise ValueError("Provided file is not a valid ZIP file.")
-
-        # Create a folder to store extracted files
-        os.makedirs(self.extracted_folder, exist_ok=True)
-
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(self.extracted_folder)
-
-        # Get the extracted file paths
-        extracted_files = [os.path.join(self.extracted_folder, f) for f in os.listdir(self.extracted_folder)]
-        return extracted_files
+    # def extract_zip(self,zip_path):
+    #     """Extracts the ZIP file and returns the extracted file path(s)."""
+    #     if not zipfile.is_zipfile(zip_path):
+    #         raise ValueError("Provided file is not a valid ZIP file.")
+    #
+    #     # Create a folder to store extracted files
+    #     os.makedirs(self.extracted_folder, exist_ok=True)
+    #
+    #     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+    #         zip_ref.extractall(self.extracted_folder)
+    #
+    #     # Get the extracted file paths
+    #     extracted_files = [os.path.join(self.extracted_folder, f) for f in os.listdir(self.extracted_folder)]
+    #     return extracted_files
 
     def get_names(self):
         return tuple(self.__names.keys())
@@ -145,18 +141,16 @@ class TextDF:
             content = file.read()  # Reads the entire file content
             return content  # Prints the content of the file
 
-    def prepare_text(self,path):
-        return self.open_txt(path).replace('\n','')
+    # def prepare_text(self,path):
+    #     return self.open_txt(path).replace('\n','')
 
-    def reg_time(self):
-        # Adjusted regex to ignore special characters and Unicode markers
-        reg_list = re.findall(r'\[\d{2}/\d{2}/\d{4},\s*\d{1,2}:\d{2}:\d{2}\]', self.__txt)
+    # def reg_time(self):
+    #     reg_list = re.findall(r'\[\d{2}/\d{2}/\d{4},\s*\d{1,2}:\d{2}:\d{2}\]', self.__txt)
+    #     return reg_list
 
-        return reg_list
-
-    def reg_txt(self):
-        reg_list = re.findall(r'\[\d{2}/\d{2}/\d{4},\s\d{2}:\d{2}:\d{2}\]', self.__txt)
-        return reg_list
+    # def reg_txt(self):
+    #     reg_list = re.findall(r'\[\d{2}/\d{2}/\d{4},\s\d{2}:\d{2}:\d{2}\]', self.__txt)
+    #     return reg_list
 
     def make_text(self,ready_str,flag = False):
         for i in split_whatsapp_chat(ready_str):
@@ -175,41 +169,26 @@ class TextDF:
         # Convert dataframe timestamps to datetime objects
         self.df["Datetime"] = self.df.apply(lambda row: datetime(row["Year"], row["Month"], row["Day"], row["Hour"], row["Minutes"]), axis=1)
 
-    def make_text1(self,path,flag = False):
-        for i in split_whatsapp_chat(self.open_txt(path)):
-            time = i[:22]
-            time = self.split_time(time)
-            i = i[22:]
-            # print(i)
-            start = i.index(':')
-            message = i[start + 2:]
-            author = i[:start]
-            self.df.loc[len(self.df)] = self.enc(author, message, flag) + time
-        self.df[["Year", "Month", "Day", "Hour", "Minutes"]] = self.df[["Year", "Month", "Day", "Hour", "Minutes"]].astype(int)
-        # Convert dataframe timestamps to datetime objects
-        self.df["Datetime"] = self.df.apply(lambda row: datetime(row["Year"], row["Month"], row["Day"], row["Hour"], row["Minutes"]), axis=1)
 
-
-
-    def enc(self, author, message, flag):
-        self.__coded_names = [
-        "Alex", "Sam", "Jordan", "Taylor", "Casey", "Morgan", "Riley", "Quinn", "Jamie", "Avery",
-        "Sky", "River", "Phoenix", "Sage", "Dakota", "Rowan", "Finley", "Blair", "Emery", "Aspen",
-        "Cameron", "Drew", "Logan", "Charlie", "Elliot", "Parker", "Reese", "Micah", "Noel", "Hayden",
-        "Dakota", "Shawn", "Jesse", "Frankie", "Max", "Adrian", "Corey", "Devon", "Lane", "Blake",
-        "Ari", "Dallas", "Skyler", "Marley", "Kai", "Toby", "Ellis", "Peyton", "Remy", "Oakley",
-        "Emerson", "Kendall", "Harley", "Sterling", "Sasha", "Jordan", "Dylan", "Case", "Hollis", "Blaine",
-        "Shiloh", "Rory", "Kieran", "Payton", "Robin", "Jules", "Tristan", "August", "Ellery", "Arden",
-        "Justice", "Rowe", "Winter", "Cam", "Haven", "Linden", "Ocean", "Sutton", "Ever", "Brighton",
-        "Harlow", "Onyx", "Vale", "Salem", "Denim", "Indigo", "Lake", "Paris", "Ridley", "Storm",
-        "West", "Lior", "Echo", "Sparrow", "Cypress", "Horizon", "Zephyr", "Zen", "Nova", "Briar"]
-        author = (' '.join(re.findall(r'(\S+)', author)))
-        self.__names[author] = ''
-        if flag:
-            if author not in self.__names:
-                self.__names[author] = self.__coded_names[len(self.__names)]
-            return [self.__names[author], message]
-        return [author, message]
+    # def enc(self, author, message, flag):
+    #     self.__coded_names = [
+    #     "Alex", "Sam", "Jordan", "Taylor", "Casey", "Morgan", "Riley", "Quinn", "Jamie", "Avery",
+    #     "Sky", "River", "Phoenix", "Sage", "Dakota", "Rowan", "Finley", "Blair", "Emery", "Aspen",
+    #     "Cameron", "Drew", "Logan", "Charlie", "Elliot", "Parker", "Reese", "Micah", "Noel", "Hayden",
+    #     "Dakota", "Shawn", "Jesse", "Frankie", "Max", "Adrian", "Corey", "Devon", "Lane", "Blake",
+    #     "Ari", "Dallas", "Skyler", "Marley", "Kai", "Toby", "Ellis", "Peyton", "Remy", "Oakley",
+    #     "Emerson", "Kendall", "Harley", "Sterling", "Sasha", "Jordan", "Dylan", "Case", "Hollis", "Blaine",
+    #     "Shiloh", "Rory", "Kieran", "Payton", "Robin", "Jules", "Tristan", "August", "Ellery", "Arden",
+    #     "Justice", "Rowe", "Winter", "Cam", "Haven", "Linden", "Ocean", "Sutton", "Ever", "Brighton",
+    #     "Harlow", "Onyx", "Vale", "Salem", "Denim", "Indigo", "Lake", "Paris", "Ridley", "Storm",
+    #     "West", "Lior", "Echo", "Sparrow", "Cypress", "Horizon", "Zephyr", "Zen", "Nova", "Briar"]
+    #     author = (' '.join(re.findall(r'(\S+)', author)))
+    #     self.__names[author] = ''
+    #     if flag:
+    #         if author not in self.__names:
+    #             self.__names[author] = self.__coded_names[len(self.__names)]
+    #         return [self.__names[author], message]
+    #     return [author, message]
 
 
     def split_time(self,date):
@@ -279,8 +258,8 @@ class TextDF:
         # If no messages remain, raise an error
         if df.empty:
             raise DateError((hour, minutes), (day, month, year))
-
         return df
+
     def dec_message(self,msg):
         if self.__enc:
             for key, item in self.__names.items():
@@ -323,9 +302,6 @@ class TextDF:
             return str
         return "".join(self.df.apply(lambda row: f"{row['Author']}: {row['Txt']}", axis=1))
 
-    def get_last_date_str(self):
-        last_row = self.df.iloc[-1]
-        return f"{last_row['Hour']}:{last_row['Minutes']}, {last_row['Day']}\\{last_row['Month']}\\{last_row['Year']}"
     def count_per_author(self):
         df = self.df.copy()
         counts = df['Author'].value_counts().to_dict()
@@ -333,25 +309,6 @@ class TextDF:
             df = df[df['Author'] != self.group_name]
         sum_counts = sum(counts.values())
         return sum_counts, counts
-
-# def week_start_end(date):
-#     if date.day_of_week != 6:
-#         date = date - timedelta(days=date.weekday() + 1)
-#     end = find_end_of_week(date).strftime("%d/%m/%Y")
-#     date = date.strftime("%d/%m/%Y")
-#     return dt.date
-
-
-def same_week(date1, date2):
-    # Convert both dates to period format (weeks starting on Sunday)
-    week1 = pd.Timestamp(date1).to_period("W-SUN")
-    week2 = pd.Timestamp(date2).to_period("W-SUN")
-    return week1 == week2
-def find_end_of_week(date):
-    date1 = date
-    while date1.day_of_week != 5: #5 is saturday in numeric.
-        date1 = date1 + pd.Timedelta(days=1)
-    return date1
 
 def find_top_5(words_list):
     words_list = [x for x in words_list if len(x) > 3 and x.count(x[0]) < len(x) - 2 and x not in ('omitted','image','You received a view once photo. For added privacy, you can', 'audio','was','added','message', 'edited>', 'sticker', 'your','<This','votes).OPTION','received', 'pages document','<This>','view', '<This>', 'once', 'For added privacy, you can','only open it on your phone.', 'privacy,', 'only', 'open', 'phone.','photo.')]

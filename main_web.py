@@ -81,14 +81,6 @@ class interface:
         df = self.df.specific_author(name)
         chat = self.df.df_to_text(df).replace('\r','')
         chat = extract_reduced_conversation(chat)
-        print(len(chat))
-
-        answer = self.df.dec_message(Comunnicate(
-            prompt=f"**Humor Detection** Analyze the chat messages from this author and determine if they are funny. If they have any humor, sarcasm, or jokes, respond with 'Yes' and provide their funniest joke. If not, respond with 'No,' but try to find the most lighthearted or amusing thing they said and include it. Messages: {chat}",
-            temperature=0.8, max_tokens=100,
-            content="You specialize in detecting humor, sarcasm, and jokes in chat messages. Assume the author might be funny unless clearly not, and return their best joke or the most amusing thing they said in one sentence."
-        ))
-
         answer1 = self.df.dec_message(Comunnicate(
             prompt=f"**Begginer English level** Analyze the personality and communication style of the author based on the messages provided. Describe their vibe **in one sentence**, making it unique to their tone, word choice, and message patterns. Avoid generic statements. Messages: {chat}",
             temperature=0.4, max_tokens=100,
