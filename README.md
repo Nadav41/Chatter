@@ -21,7 +21,6 @@ The website app recieves a ZIP-file extracted from any whatsapp chat and analyse
 - Python & Pandas library
 - Flask web-framework
 - HTML, CSS
-- Java Script
 
 ### How it works
 1. **User Uploads a WhatsApp Chat**  
