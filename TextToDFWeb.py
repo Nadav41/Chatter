@@ -48,8 +48,8 @@ class TextDF:
             self.group_name = group_name
         print(self.group_name)
 
-        if enc:
-            self.enc_Txt()
+        # if enc:
+        #     self.enc_Txt()
 
     def find_common_words(self):
         df = self.df.copy()
@@ -170,25 +170,25 @@ class TextDF:
         self.df["Datetime"] = self.df.apply(lambda row: datetime(row["Year"], row["Month"], row["Day"], row["Hour"], row["Minutes"]), axis=1)
 
 
-    # def enc(self, author, message, flag):
-    #     self.__coded_names = [
-    #     "Alex", "Sam", "Jordan", "Taylor", "Casey", "Morgan", "Riley", "Quinn", "Jamie", "Avery",
-    #     "Sky", "River", "Phoenix", "Sage", "Dakota", "Rowan", "Finley", "Blair", "Emery", "Aspen",
-    #     "Cameron", "Drew", "Logan", "Charlie", "Elliot", "Parker", "Reese", "Micah", "Noel", "Hayden",
-    #     "Dakota", "Shawn", "Jesse", "Frankie", "Max", "Adrian", "Corey", "Devon", "Lane", "Blake",
-    #     "Ari", "Dallas", "Skyler", "Marley", "Kai", "Toby", "Ellis", "Peyton", "Remy", "Oakley",
-    #     "Emerson", "Kendall", "Harley", "Sterling", "Sasha", "Jordan", "Dylan", "Case", "Hollis", "Blaine",
-    #     "Shiloh", "Rory", "Kieran", "Payton", "Robin", "Jules", "Tristan", "August", "Ellery", "Arden",
-    #     "Justice", "Rowe", "Winter", "Cam", "Haven", "Linden", "Ocean", "Sutton", "Ever", "Brighton",
-    #     "Harlow", "Onyx", "Vale", "Salem", "Denim", "Indigo", "Lake", "Paris", "Ridley", "Storm",
-    #     "West", "Lior", "Echo", "Sparrow", "Cypress", "Horizon", "Zephyr", "Zen", "Nova", "Briar"]
-    #     author = (' '.join(re.findall(r'(\S+)', author)))
-    #     self.__names[author] = ''
-    #     if flag:
-    #         if author not in self.__names:
-    #             self.__names[author] = self.__coded_names[len(self.__names)]
-    #         return [self.__names[author], message]
-    #     return [author, message]
+    def enc(self, author, message, flag):
+        self.__coded_names = [
+        "Alex", "Sam", "Jordan", "Taylor", "Casey", "Morgan", "Riley", "Quinn", "Jamie", "Avery",
+        "Sky", "River", "Phoenix", "Sage", "Dakota", "Rowan", "Finley", "Blair", "Emery", "Aspen",
+        "Cameron", "Drew", "Logan", "Charlie", "Elliot", "Parker", "Reese", "Micah", "Noel", "Hayden",
+        "Dakota", "Shawn", "Jesse", "Frankie", "Max", "Adrian", "Corey", "Devon", "Lane", "Blake",
+        "Ari", "Dallas", "Skyler", "Marley", "Kai", "Toby", "Ellis", "Peyton", "Remy", "Oakley",
+        "Emerson", "Kendall", "Harley", "Sterling", "Sasha", "Jordan", "Dylan", "Case", "Hollis", "Blaine",
+        "Shiloh", "Rory", "Kieran", "Payton", "Robin", "Jules", "Tristan", "August", "Ellery", "Arden",
+        "Justice", "Rowe", "Winter", "Cam", "Haven", "Linden", "Ocean", "Sutton", "Ever", "Brighton",
+        "Harlow", "Onyx", "Vale", "Salem", "Denim", "Indigo", "Lake", "Paris", "Ridley", "Storm",
+        "West", "Lior", "Echo", "Sparrow", "Cypress", "Horizon", "Zephyr", "Zen", "Nova", "Briar"]
+        author = (' '.join(re.findall(r'(\S+)', author)))
+        self.__names[author] = ''
+        if flag:
+            if author not in self.__names:
+                self.__names[author] = self.__coded_names[len(self.__names)]
+            return [self.__names[author], message]
+        return [author, message]
 
 
     def split_time(self,date):
@@ -311,10 +311,6 @@ class TextDF:
         return sum_counts, counts
 
 def find_top_5(words_list):
-    words_list = [x for x in words_list if len(x) > 3 and x.count(x[0]) < len(x) - 2 and x not in ('omitted','image','You received a view once photo. For added privacy, you can', 'audio','was','added','message', 'edited>', 'sticker', 'your','<This','votes).OPTION','received', 'pages document','<This>','view', '<This>', 'once', 'For added privacy, you can','only open it on your phone.', 'privacy,', 'only', 'open', 'phone.','photo.')]
+    words_list = [x for x in words_list if len(x) > 3 and x.count(x[0]) < len(x) - 2 and x not in ('omitted..','image','You received a view once photo. For added privacy, you can', 'audio','was','added','message', 'edited>', 'sticker', 'your','<This','votes).OPTION','received', 'pages document','<This>','view', '<This>', 'once', 'For added privacy, you can','only open it on your phone.', 'privacy,', 'only', 'open', 'phone.','photo.', 'omitted.. ')]
     res_lst = tuple(Counter(words_list).most_common(10))
     return res_lst
-    res_str = ''
-    for word in res_lst:
-        res_str += "\u200E" + f', "{word[0]}" - {word[1]}<br>'
-    return '<br>'+res_str[2:]
