@@ -40,12 +40,14 @@ The website app recieves a ZIP-file extracted from any whatsapp chat and analyse
    - AI requests are handled using Groq API and carefully designed prompts for accurate responses.
 
 ## Usage:
-### Option 1:
+### Option 1- Local:
 1. Download the repository.
 2. Install requirements.txt.
-3. Run app.py file.
-4. Open http://127.0.0.1:5001.
-5. Further instructions are on the website on the bottom.
+3. Remove # from row 6.
+4. Add .env to project folder with GROQ_API_KEY = 'api-key'.
+5. Run app.py file.
+6. Open http://127.0.0.1:5001.
+7. Further instructions are on the website on the bottom.
 
 ### Option 2:
 **For easy access but small chats**
