@@ -5,8 +5,7 @@ import os
 #trialapi - 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
 # tex = TextDF('/Users/nadav/Downloads/_chat 4 copy.txt',True)
 
-if os.getenv("RAILWAY_ENVIRONMENT_NAME") != "production":
-    load_dotenv()
+# load_dotenv()
 
 api_key = os.getenv("GROQ_API_KEY")  # Fetch API key securely
 client = Groq(api_key=api_key)
